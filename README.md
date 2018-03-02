@@ -10,4 +10,6 @@ Download Python 3.6 from https://www.python.org/downloads or https://www.anacond
 
 packages will be installed automatically.
 
-Stock information is stored in data/.csv files. 
+Stock information is stored in data/ticker_type.csv files. 
+
+Database can be accessed through endpoint se568.csfmbtsxk6dc.us-east-2.rds.amazonaws.com with username = admin and password = password.
