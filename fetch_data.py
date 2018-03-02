@@ -1,6 +1,5 @@
 import pip
 import os
-import time
 try:
     import mysql.connector  # using mysql connector should install it first(python 2.7/3.3/3.4)
 except ImportError:
@@ -97,7 +96,8 @@ def init_db():
 def get_realtime_data(stock):
     realtime = []
     for ticker in stock:
-        df, meta = ts.get_intraday(symbol=ticker, interval='1min', outputsize='full')
+        print("loading " + ticker)
+        df, meta = ts.get_intraday(symbol=ticker, interval='1min', outputsize='compact')
         df['sym'] = meta['2. Symbol']
         realtime.append(df)
     return realtime
@@ -106,22 +106,22 @@ def get_realtime_data(stock):
 def get_hist_data(stock):
     historical = []
     for ticker in stock:
-        # print("loading " + ticker)
+        print("loading " + ticker)
         df, meta = ts.get_daily(symbol=ticker, outputsize='full')
         df['sym'] = meta['2. Symbol']
         historical.append(df)
     return historical
 
 def test_plot(df):
-    # data, meta_data = ts.get_intraday(symbol='MSFT', interval='1min', outputsize='full')
+    # plt.figure()
     df['4. close'].iloc[-260:].plot()
-    # plt.title('Intraday Times Series for the MSFT stock (1 min)')
+    # plt.title('Times Series for the ' + df['sym'] + ' stock')
     plt.show()
 
 if __name__ == '__main__':
     init_db()
     # get TimeSeries object of Alpha Vintage API
-    ts = TimeSeries(key=api_key, output_format='pandas')
+    ts = TimeSeries(key=api_key, output_format='pandas', retries=20)
     print('Reading Data and Putting them in Database. Exit with Ctrl+C.')
     try:
         # returns current price and volume quotes for a given symbol in a dataframe
@@ -129,7 +129,7 @@ if __name__ == '__main__':
                                echo=False)
 
         # using alpha vantage finance api to save data into a pandas dataframe
-        stocks = ['AAPL', 'GOOGL', 'NVDA', 'TSLA', 'AMZN', 'MSFT', 'BAC', 'NKE', 'NFLX', 'FB']
+        stocks = ['AAPL', 'GOOGL', 'NVDA', 'AABA', 'AMZN', 'MSFT', 'BAC', 'NKE', 'NFLX', 'FB']
         # stocks = ['AAPL']
         df_historical = get_hist_data(stocks)
         print('Creating historical database.')
@@ -171,4 +171,7 @@ if __name__ == '__main__':
 
     except KeyboardInterrupt:
         print('User Asked to Exit')
+        raise SystemExit()
+    except ValueError:
+        print('Retry if Invalid API calls are raised. It might be caused by faulty connection or unresponsive server. Or change retries in TimeSeries to a greater number.')
         raise SystemExit()
