@@ -1,15 +1,26 @@
-# SE568 - Web-Based Stock Forecaster
+# SEProject 
 
-### General Information
+### 1. Installation
 
-### Setup and Run
-Download MySQL Workbench from https://dev.mysql.com/downloads/workbench
+<!--
+For Mac User:
+##### 1. Install MYSQL ()
+    brew install mysql-server
+    brew tap homebrew/services
+    brew services start mysql
+    mysqladmin -u root password 'yourpassword'
+-->
 
-Download Python 3.6 from https://www.python.org/downloads or https://www.anaconda.com/download
-> python3 fetch_data.py
+##### 2. Download repository and run
+    git clone https://github.com/liuchengtian/SE568
+    cd SE568
+    pip install -r requirements.txt
+    cd source
+    python fetch_data.py
+    python app.py
+    
+### 2. Resource
 
-packages will be installed automatically.
+[Gentelella](https://github.com/puikinsh/gentelella) is a free to use Bootstrap admin template.
 
-Stock information is stored in data/ticker_type.csv files. 
-
-Database can be accessed through endpoint se568.csfmbtsxk6dc.us-east-2.rds.amazonaws.com with username = admin and password = password.
+This project(https://github.com/afourmy/flask-gentelella) integrates Gentelella with Flask using blueprints, flask_login and flask_migrate.
