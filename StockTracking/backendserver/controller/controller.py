@@ -18,8 +18,9 @@ def index():
 
 @app.route('/backend/get_news', methods=['GET', 'POST'])
 def get_news():
-    a = request.form.get('ticker')
-    return rss.feed()
+    ticker = request.form.get('ticker')
+    print (ticker)
+    return rss.feed(ticker)
 
 
 
