@@ -1,0 +1,38 @@
+.back-color {
+  background-color: #2a3f54;
+}
+.nav-border{
+  border: 0px solid;
+}
+
+
+.footer {
+
+    color:#D5D5D5;
+ font-size: 12px;
+}
+.intro {
+    margin-top:200px;
+    text-align: center;
+  }
+ .title {
+    margin: 100px auto;
+    text-align:center;
+    color: #FBAF41;
+    width:300px;
+    font-size:2em;
+    margin-bottom:0;
+  }
+ .search {
+    text-align:center;
+    color: #000000;
+    font-size:2em;
+  }
+ .search-field {
+     width:300px;
+     height: 30px;
+   }
+
+   .search-btn {
+     width:60px;
+   }
