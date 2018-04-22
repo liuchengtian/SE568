@@ -4,7 +4,7 @@ import os
 def getData(sys):
     dirname = os.path.dirname(__file__)
     path = '/CSV/'+sys+'.csv'
-    print(dirname)
+    # print(dirname)
     f = open(dirname+path, 'r')
     csv_f = csv.reader(f)
     date = []
@@ -26,7 +26,7 @@ def getData(sys):
     # print data
     f.close()
 
-    #define the jsonformate
+    # define the json format
     data = dict()
     data['date'] = date
     data['open'] = Open
@@ -35,4 +35,4 @@ def getData(sys):
     data['close'] = Close
     return data
 
-#print (getData("AMZN"))
+# print(getData("AMZN"))

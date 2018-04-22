@@ -1,5 +1,6 @@
 import feedparser
 
+
 def feed(ticker: str):
     rss_url = 'http://finance.yahoo.com/rss/headline?s=' + ticker
     # get rss
