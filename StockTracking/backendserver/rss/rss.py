@@ -21,10 +21,9 @@ def feed(ticker: str):
     # number of articles
     n = len(feeds['entries'])
     rss['number'] = n
-    rss['article'] = []
+    rss['article'] = [dict() for i in range(n)]
 
     for i in range(n):
-        rss['article'][i] = dict()
         rss['article'][i]['index'] = i
         rss['article'][i]['title'] = feeds['entries'][i]['title']
         rss['article'][i]['link'] = feeds['entries'][i]['link']

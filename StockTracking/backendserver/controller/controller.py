@@ -4,6 +4,7 @@ from flask import Flask, render_template, request
 from StockTracking.backendserver.rss import rss
 from StockTracking.backendserver import app
 from flask import request,render_template,jsonify
+from StockTracking.backendserver.temple import readFile
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
@@ -17,7 +18,12 @@ def index():
 @app.route('/backend/get_news', methods=['GET', 'POST'])
 def get_news():
     ticker = request.form.get('ticker')
+    print('get news about '+ticker)
     return jsonify(rss.feed(ticker))
 
-
+@app.route('/backend/get_price', methods=['GET', 'POST'])
+def get_price():
+    ticker = request.form.get('ticker')
+    print('get price about AMZN')
+    return jsonify(readFile.getData('AMZN'))
 
