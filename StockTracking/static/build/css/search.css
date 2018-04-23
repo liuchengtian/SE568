@@ -1,27 +1,29 @@
-.back-color {
+.search_back-color {
   background-color: #2a3f54;
 }
-.nav-border{
-  border: 0px solid;
-}
 
 
-.footer {
+
+.search_footer {
+  background-color: #2a3f54;
 
     color:#D5D5D5;
  font-size: 12px;
 }
-.intro {
-    margin-top:200px;
+.search_intro {
+    margin-top: 200px;
+  background-color: #2a3f54;
+
+    margin-bottom:10px;
     text-align: center;
   }
- .title {
+ .search_title {
     margin: 100px auto;
     text-align:center;
     color: #FBAF41;
     width:300px;
     font-size:2em;
-    margin-bottom:0;
+
   }
  .search {
     text-align:center;

@@ -13,6 +13,10 @@
     <link href="{{ url_for('static', filename='./vendors/nprogress/nprogress.css') }}" rel="stylesheet">
     <!-- iCheck -->
     <link href="{{ url_for('static', filename='./vendors/iCheck/skins/flat/green.css') }}" rel="stylesheet">
+    <!--search page css-->
+    <link href="{{ url_for('static', filename='../static/build/css/search.css') }}" rel="stylesheet">
+    <!--Admin page css-->
+    <link href="{{ url_for('static', filename='../static/build/css/admin.css') }}" rel="stylesheet">
 
     <!-- bootstrap-progressbar -->
     <link href="{{ url_for('static', filename='./vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css') }}" rel="stylesheet">
@@ -59,11 +63,13 @@
               <div class="menu_section">
                 <ul class="nav side-menu">
                   <h3>General</h3>
-                  <li><a><i class="fa fa-search"></i> Searching <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-search"></i> Options <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
+                      <li><a href="search">Search</a></li>
                       <li><a href="index.html">Topic</a></li>
                       <li><a href="index2.html">Question</a></li>
                       <li><a href="index3.html">Answer</a></li>
+
                     </ul>
                   </li>
                 </ul>
@@ -81,7 +87,7 @@
               <a data-toggle="tooltip" data-placement="top" title="Lock">
                 <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
               </a>
-              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login1.html">
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
               </a>
             </div>
@@ -95,11 +101,19 @@
     {% endblock %}
     {% block footer %}
     <!-- footer content -->
-    <footer>
-    <div class="pull-right">
-    Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-    </div>
-    <div class="clearfix"></div>
+    <!--<footer>-->
+    <!--<div class="pull-right">-->
+    <!--Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>-->
+    <!--</div>-->
+    <!--<div class="clearfix"></div>-->
+    <!--</footer>-->
+
+    <footer class="search_footer">
+        <div class="search_intro">
+            <p><span style="color: #FADA5B">Copyright ©2018</span>, Chaoya Yan, Yixuan Duan, Zhiwen Wang, Chengtian Liu, Shuaishuai Sun, Rutgers, The State University of New Jersey,
+                    an equal opportunity, affirmative action institution. All rights reserved.</p></br>
+
+        </div>
     </footer>
     <!-- /footer content -->
     {% endblock %}
