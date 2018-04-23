@@ -18,7 +18,7 @@ app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////mnt/Users/sunshuaishuai/SE568.database.db'
 db = SQLAlchemy(app)
 login_manager = LoginManager()
-login_manager = init_app(app)
+login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 

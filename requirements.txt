@@ -5,3 +5,7 @@ feedparser
 alpha_vantage
 matplotlib
 pandas
+flask_wtf
+wtforms
+flask_login
+flask_sqlalchemy

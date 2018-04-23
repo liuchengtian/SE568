@@ -2,4 +2,4 @@
 # -*- coding: utf-8 -*-
 
 
-from StockTracking.backendserver import app
+# from StockTracking.backendserver import app
