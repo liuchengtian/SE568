@@ -9,10 +9,10 @@
 
 #
 #
-from StockTracking.backendserver.controller import controller
+#from StockTracking.backendserver.controller import controller
 
 # from StockTracking.backendserver import data
 # from StockTracking.backendserver import rss
 #
 
-app = controller.app
+#app = controller.app
