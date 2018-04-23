@@ -35,4 +35,6 @@ def getData(sys):
     data['close'] = Close
     return data
 
-# print(getData("AMZN"))
+
+if __name__ == '__main__':
+    print(getData("AMZN"))

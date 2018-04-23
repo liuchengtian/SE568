@@ -1,10 +1,12 @@
 $( document ).ready(function() {
 	console.log( "ready!" );
-
     //updata News
 	var url = "backend/get_news";
-	var input = {ticker: "AMZN"};
+    var input = {'ticker': getUrlParameter('ticker')};
     console.log(input);
+    if (input === undefined){
+        var input = {'ticker': "AMZN"};
+    }
     $.ajax({type: "post",
         url: url,
         data: input,
@@ -31,7 +33,9 @@ $( document ).ready(function() {
             console.log('query fail.');
           }
         });
+});
 
+$( document ).ready(function() {
     //initial price
     var date = [];
     var dataOpen = [];
@@ -41,6 +45,11 @@ $( document ).ready(function() {
 
     //get data
     var urlPrice = "backend/get_price";
+    var input = {'ticker': getUrlParameter('ticker')};
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
     $.ajax({type: "post",
         url: urlPrice,
         data: input,
@@ -377,3 +386,18 @@ $( document ).ready(function() {
         // $('<a>').attr('href','/user/messages').append(
             // $('<span>').attr('class', 'tab').append("Message center")
 // )))
+
+var getUrlParameter = function getUrlParameter(sParam) {
+    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+        sURLVariables = sPageURL.split('&'),
+        sParameterName,
+        i;
+
+    for (i = 0; i < sURLVariables.length; i++) {
+        sParameterName = sURLVariables[i].split('=');
+
+        if (sParameterName[0] === sParam) {
+            return sParameterName[1] === undefined ? true : sParameterName[1];
+        }
+    }
+};
