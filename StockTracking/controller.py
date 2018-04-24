@@ -1,15 +1,16 @@
 # init
 from flask import Flask, render_template, request, redirect, url_for
-from StockTracking.backendserver.rss import rss
 from flask import request, render_template, jsonify
-from StockTracking.backendserver.data import read_file
 from flask_wtf import FlaskForm
-# from flask_bootstrap import Bootstrap
+#from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from .backendserver.rss import rss
+from .backendserver.data import read_file
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -48,7 +49,7 @@ class RegisterForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
-    return render_template('mainPage.html')
+    return render_template('index1.html')
 
 
 @app.route('/login',  methods=['GET', 'POST'])
@@ -79,7 +80,7 @@ def signup():
 
         return '<h1> New user has been created!</h1>'
 
-    return render_template('signup .html', form=form)
+    return render_template('signup.html', form=form)
 
 
 @app.route('/logout')
@@ -89,8 +90,14 @@ def logout():
     return redirect(url_for('index'))
 
 
-@app.route('/?ticker=<ticker_id>', methods=['GET', 'POST'])
+@app.route('/stock', methods=['GET', 'POST'])
+def stock():
+    print('in stock')
+    return render_template('mainPage.html')
+
+@app.route('/stock?ticker=<ticker_id>', methods=['GET', 'POST'])
 def user(ticker_id):
+    print("have ticker name")
     print(ticker_id)
     return render_template('mainPage.html')
 
@@ -98,6 +105,17 @@ def user(ticker_id):
 @app.route('/user', methods=['GET', 'POST'])
 def index():
     return render_template('userPage.html')
+
+
+@app.route('/stocks', methods=['GET', 'POST'])
+def stocks():
+    return render_template('result.html')
+
+
+@app.route('/backend/get_stocks', methods=['GET', 'POST'])
+def get_stocks():
+    return jsonify(read_file.getStocks())
+
 
 @app.route('/backend/get_news', methods=['GET', 'POST'])
 def get_news():
@@ -110,9 +128,4 @@ def get_news():
 def get_price():
     ticker = request.form.get('ticker')
     print('get price about ' + ticker)
-    return jsonify(read_file.getData(ticker))
-
-
-@app.route('/backend/query_info', methods=['GET', 'POST'])
-def query_info():
-    pass
+    return jsonify(read_file.getStock(ticker))

@@ -1,8 +1,14 @@
 .search_back-color {
   background-color: #2a3f54;
 }
-
-
+.nav-border{
+  border: 0px;
+    border-color: #2a3f54;
+}
+.navbar-default{
+     background-color: #2a3f54;
+    border-color: #2a3f54;
+}
 
 .search_footer {
   background-color: #2a3f54;
@@ -12,9 +18,6 @@
 }
 .search_intro {
     margin-top: 200px;
-  background-color: #2a3f54;
-
-    margin-bottom:10px;
     text-align: center;
   }
  .search_title {
@@ -23,6 +26,7 @@
     color: #FBAF41;
     width:300px;
     font-size:2em;
+    margin-bottom:0;
 
   }
  .search {

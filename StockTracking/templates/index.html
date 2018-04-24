@@ -5,14 +5,18 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+
+  <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />-->
+      <link href="{{ url_for('static', filename='./vendors/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='./build/css/search.css') }}" rel="stylesheet">
+
   <title>Stock forecastor</title>
-  <link rel="stylesheet" type="text/css" href="app.css">
+
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
         rel="stylesheet">
 </head>
 
-<body class="back-color ">
+<body class="search_back-color ">
 
   <nav class="navbar navbar-default back-color nav-border">
     <div class="container-fluid">
@@ -37,22 +41,29 @@
     </div>
     </nav>
   <div>
-      <p class="title">Search the Stock</p>
+      <p class="search_title">Search the Stock</p>
       <nav class=" navbar navbar-light bg-light justify-content-between">
 
         <form class="form-inline search">
-          <input class="form-control mr-sm-2 search-field" type="search" placeholder="Plase input stock name" aria-label="Search" style="width: 400px; height: 35px;">
-          <button class="btn btn-outline-success my-2 my-sm-0 search-btn" type="submit">submit</button>
+          <input class="form-control mr-sm-2 search-field" type="search" placeholder="Plase input stock name" aria-label="Search" style="width: 400px; height: 35px;" id='stockName'>
+          <button class="btn btn-outline-success my-2 my-sm-0 search-btn" type="submit" id="subStockName">submit</button>
         </form>
       </nav>
   </div>
-  <script type="text/javascript">
-      alert('Stock is not Found!')
-  </script>
+<<<<<<< HEAD:StockTracking/templates/app.html
+  <!-- ECharts -->
+  <script src="{{ url_for('static', filename='./vendors/echarts/dist/echarts.js') }}"></script>
+  <script src="{{ url_for('static', filename='./vendors/echarts/map/js/world.js') }}"></script>
+  <!-- jQuery -->
+  <script src="{{ url_for('static', filename='./vendors/jquery/dist/jquery.min.js') }}"></script>
+  <!-- Custom Theme Scripts -->
+  <script src="{{ url_for('static', filename='./build/js/mainPage.js') }}"></script>
+=======
 
+>>>>>>> 8455185eb0104c2cf3ed2eceb07c9ff849c636e9:StockTracking/templates/index.html
 
-  <footer class="footer">
-    <div class="intro">
+  <footer class="searh__footer">
+    <div class="search_intro">
     <p><span style="color: #FADA5B">Copyright ©2018</span>, Chaoya Yan, Yixuan Duan, Zhiwen Wang, Chengtian Liu, Shuaishuai Sun, Rutgers, The State University of New Jersey, </br>
       an equal opportunity, affirmative action institution. All rights reserved.</p></br>
 
