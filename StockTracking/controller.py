@@ -1,8 +1,8 @@
 # init
 from flask import Flask, render_template, request, redirect, url_for
-from StockTracking.backendserver.rss import rss
+#from StockTracking.backendserver.rss import rss
 from flask import request, render_template, jsonify
-from StockTracking.backendserver.data import read_file
+# from StockTracking.backendserver.data import read_file
 from flask_wtf import FlaskForm
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -10,23 +10,29 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
+import feedparser
+import csv
+import os
+
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 Bootstrap(app)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite3')
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
-class User(UserMixin, db.Model):
+class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.column(db.String(15))
-    email = db.column(db.String(50))
-    password = db.column(db.String(80))
+    username = db.Column(db.String(15), unique=True)
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(80))
 
 
 @login_manager.user_loader
@@ -41,7 +47,7 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(min=4, max=15)])
+    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(min=4, max=50)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = StringField('password', validators=[InputRequired(), Length(min=8, max=80)])
 
@@ -99,20 +105,98 @@ def user(ticker_id):
 def index():
     return render_template('userPage.html')
 
+
 @app.route('/backend/get_news', methods=['GET', 'POST'])
 def get_news():
     ticker = request.form.get('ticker')
     print('get news about ' + ticker)
-    return jsonify(rss.feed(ticker))
+    return jsonify(feed(ticker))
 
 
 @app.route('/backend/get_price', methods=['GET', 'POST'])
 def get_price():
     ticker = request.form.get('ticker')
     print('get price about ' + ticker)
-    return jsonify(read_file.getData(ticker))
+    return jsonify(getData(ticker))
 
 
 @app.route('/backend/query_info', methods=['GET', 'POST'])
 def query_info():
     pass
+
+
+def feed(ticker: str):
+    rss_url = 'http://finance.yahoo.com/rss/headline?s=' + ticker
+    # get rss
+    feeds = feedparser.parse(rss_url)
+    rss = dict()
+    # get version of rss
+    # print(feeds.version)
+
+    # get http head
+    # print(feeds.headers)
+    # print(feeds.headers.get('Content-Type'))
+
+    # rss title
+    rss['title'] = feeds['feed']['title']
+    # rss link
+    rss['link'] = feeds['feed']['link']
+    # rss subtitle
+    rss['sub title'] = feeds['feed']['subtitle']
+    # number of articles
+    print(feeds)
+    n = len(feeds['entries'])
+    rss['number'] = n
+    rss['article'] = [dict() for i in range(n)]
+
+    for i in range(n):
+        rss['article'][i]['index'] = i
+        rss['article'][i]['title'] = feeds['entries'][i]['title']
+        rss['article'][i]['link'] = feeds['entries'][i]['link']
+        rss['article'][i]['date'] = feeds['entries'][i]['published_parsed']
+        rss['article'][i]['summary'] = feeds['entries'][i]['summary']
+
+    return rss
+
+
+def getData(sys):
+    dirname = os.path.dirname(__file__)
+    path = '/CSV/'+sys+'.csv'
+    # print(dirname)
+    f = open(dirname+path, 'r')
+    csv_f = csv.reader(f)
+    date = []
+    Open = []
+    High = []
+    Low = []
+    Close = []
+    for row in csv_f:
+        dateItem = row[0]
+        openItem = float(row[1])
+        highItewm = float(row[2])
+        lowItem = float(row[3])
+        closeItem = float(row[4])
+        date.append(dateItem)
+        Open.append(openItem)
+        High.append(highItewm)
+        Low.append(lowItem)
+        Close.append(closeItem)
+    # print data
+    f.close()
+
+    # define the json format
+    data = dict()
+    data['date'] = date
+    data['open'] = Open
+    data['high'] = High
+    data['low'] = Low
+    data['close'] = Close
+    return data
+
+
+# if __name__ == '__main__':
+#     print(getData("AMZN_historical"))
+#
+#
+# if __name__ == '__main__':
+#     print(feed('AMZN'))
