@@ -2,5 +2,5 @@
 # -*- coding: utf-8 -*-
 
 # init
-from StockTracking.backendserver import data
-from StockTracking.backendserver import rss
+from . import data
+from . import rss
