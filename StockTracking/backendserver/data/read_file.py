@@ -1,40 +1,63 @@
 import csv
 import os
+from StockTracking.backendserver.data import data_manager as DM
 
-def getData(sys):
+stockNameSet = ['AABA', 'AAPL', 'AMZN', 'BAC', 'FB', 'GOOGL', 'MSFT', 'NFLX', 'NKE', 'NVDA']
+
+
+def getStock(sys):
     dirname = os.path.dirname(__file__)
-    path = '/CSV/'+sys+'.csv'
-    # print(dirname)
-    f = open(dirname+path, 'r')
-    csv_f = csv.reader(f)
-    date = []
-    Open = []
-    High = []
-    Low = []
-    Close = []
-    for row in csv_f:
-        dateItem = row[0]
-        openItem = float(row[1])
-        highItewm = float(row[2])
-        lowItem = float(row[3])
-        closeItem = float(row[4])
-        date.append(dateItem)
-        Open.append(openItem)
-        High.append(highItewm)
-        Low.append(lowItem)
-        Close.append(closeItem)
-    # print data
-    f.close()
+    path = '/csv/'+sys+'_historical.csv'
+    print(dirname)
+    dm = DM.DataManager(dirname+path)
+    typeSet = dm.column_names
+    dataSet = dict()
+    dateSet = []
+    echartDataSet = []
+    for item in typeSet:
+        dataSet[item] = []
+    lenSize, itemSize = dm.data.shape
+    for i in range(100):
+        dataItem = dm.data.iloc[i, :]
+        dateSet.append(dataItem[0])
+        for j in range(itemSize):
+            dataSet[typeSet[j]].append(dataItem[j])
+    print(dataSet)
+    resultSet = dict()
+    resultSet['typeName'] = typeSet
+    print(resultSet['typeName'])
+    resultSet['tableData'] = dataSet
+    resultSet['date'] = dateSet
+    for i in range(1,itemSize-2):
+        echartItem = dict()
+        echartItem['name'] = typeSet[i]
+        echartItem['type'] = 'line'
+        echartItem['smooth'] = True
+        echartItem['data'] = dataSet[typeSet[i]]
+        echartDataSet.append(echartItem)
+    resultSet['echartData'] = echartDataSet
+    return resultSet
 
-    # define the json format
-    data = dict()
-    data['date'] = date
-    data['open'] = Open
-    data['high'] = High
-    data['low'] = Low
-    data['close'] = Close
-    return data
+
+def getStocks():
+    dirname = os.path.dirname(__file__)
+    resultSet = []
+    typeSet = None
+    result = dict()
+    for item in stockNameSet:
+        path = '/csv/'+item+'_realtime.csv'
+        dm = DM.DataManager(dirname+path)
+        dataItem = dict()
+        typeSet = dm.column_names
+        lenSize,itemSize = dm.data.shape
+        tempItem = dm.data.iloc[0, :]
+        for j in range(itemSize):
+            dataItem[typeSet[j]]=tempItem[j]
+        resultSet.append(dataItem)
+    result['data'] = resultSet
+    result['colName'] = typeSet
+    return result
 
 
 if __name__ == '__main__':
-    print(getData("AMZN_historical"))
+    print(getStock("AMZN"))

@@ -1,8 +1,6 @@
 # init
 from flask import Flask, render_template, request, redirect, url_for
-from StockTracking.backendserver.rss import rss
 from flask import request, render_template, jsonify
-from StockTracking.backendserver.data import read_file
 from flask_wtf import FlaskForm
 from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -14,6 +12,9 @@ import feedparser
 import csv
 import os
 
+
+from .backendserver.rss import rss
+from .backendserver.data import read_file
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -38,6 +39,8 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
 class LoginForm(FlaskForm):
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = StringField('password', validators=[InputRequired(), Length(min=8, max=80)])
@@ -94,8 +97,14 @@ def logout():
     return redirect(url_for('start'))
 
 
-@app.route('/?ticker=<ticker_id>', methods=['GET', 'POST'])
+@app.route('/stock', methods=['GET', 'POST'])
+def stock():
+    print('in stock')
+    return render_template('mainPage.html')
+
+@app.route('/stock?ticker=<ticker_id>', methods=['GET', 'POST'])
 def user(ticker_id):
+    print("have ticker name")
     print(ticker_id)
     return render_template('mainPage.html', name='Welcome, ' + current_user.username)
 
@@ -103,6 +112,17 @@ def user(ticker_id):
 @app.route('/user', methods=['GET', 'POST'])
 def index():
     return render_template('userPage.html')
+
+
+
+@app.route('/stocks', methods=['GET', 'POST'])
+def stocks():
+    return render_template('result.html')
+
+
+@app.route('/backend/get_stocks', methods=['GET', 'POST'])
+def get_stocks():
+    return jsonify(read_file.getStocks())
 
 
 @app.route('/backend/get_news', methods=['GET', 'POST'])
@@ -116,9 +136,4 @@ def get_news():
 def get_price():
     ticker = request.form.get('ticker')
     print('get price about ' + ticker)
-    return jsonify(read_file.getData(ticker))
-
-
-@app.route('/backend/query_info', methods=['GET', 'POST'])
-def query_info():
-    pass
+    return jsonify(read_file.getStock(ticker))

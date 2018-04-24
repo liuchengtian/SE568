@@ -1,4 +1,5 @@
-import StockTracking.controller as controller
+from StockTracking import controller
+
 app = controller.app
 
 if __name__ == '__main__':
