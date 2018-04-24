@@ -21,14 +21,14 @@ Bootstrap(app)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 basedir = os.path.abspath(os.path.dirname(__file__))
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'app.sqlite3')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
@@ -64,9 +64,10 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user:
+            #if user.password == form.password.data:
             if check_password_hash(user.password, form.password.data):
-                logout_user(user, remember=form.remember.data)
-                return redirect(url_for('dashboard'))
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('user', ticker_id=user.id))
 
         return '<h1>Invalid username or password!</h1>'
 
@@ -79,7 +80,7 @@ def signup():
 
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
-        new_user = User(username=form.username.data, email=form.email.data, password=form.password.data)
+        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
@@ -92,13 +93,13 @@ def signup():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('start'))
 
 
 @app.route('/?ticker=<ticker_id>', methods=['GET', 'POST'])
 def user(ticker_id):
     print(ticker_id)
-    return render_template('mainPage.html')
+    return render_template('mainPage.html', name='Welcome, ' + current_user.username)
 
 
 @app.route('/user', methods=['GET', 'POST'])
