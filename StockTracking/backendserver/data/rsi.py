@@ -1,6 +1,6 @@
 import numpy as np
-import data_manager as DM
 import os
+from .data_manager import DataManager
 
 
 def calculate_rsi(prices, n=14):
@@ -31,7 +31,7 @@ def calculate_rsi(prices, n=14):
 def read_historical(stockSymbol):
     dirname = os.path.dirname(__file__)
     path = '/csv/' + stockSymbol + '_historical.csv'
-    dm = DM.DataManager(dirname + path)
+    dm = DataManager(dirname + path)
     column_name = dm.column_names
     historical_prices = [dm.data[column_name[i]].tolist() for i in range(1,6)]
     # print(historical_prices)

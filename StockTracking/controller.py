@@ -8,7 +8,6 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
-
 from .backendserver.rss import rss
 from .backendserver.data import read_file, query_info
 
@@ -50,6 +49,11 @@ class RegisterForm(FlaskForm):
 
 @app.route('/', methods=['GET', 'POST'])
 def start():
+    return render_template('index1.html')
+
+
+@app.route('/index', methods=['GET', 'POST'])
+def index():
     return render_template('index1.html')
 
 
@@ -98,14 +102,13 @@ def stock():
 
 
 @app.route('/stock?ticker=<ticker_id>', methods=['GET', 'POST'])
-def user(ticker_id):
-    print("have ticker name")
-    print(ticker_id)
+def stock_with_id(ticker_id):
+    print("have ticker name:", ticker_id)
     return render_template('mainPage.html')
 
 
 @app.route('/user', methods=['GET', 'POST'])
-def index():
+def user():
     return render_template('userPage.html')
 
 
@@ -136,5 +139,6 @@ def get_price():
 @app.route('/backend/get_prediction', methods=['GET', "POST"])
 def get_prediction():
     ticker = request.form.get('ticker')
-    query_info.function(ticker)
+    interval = request.form.get('interval')
+    query_info.function(ticker, interval)
     return

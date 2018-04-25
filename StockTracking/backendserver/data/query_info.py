@@ -1,38 +1,43 @@
 from .analyzer import analyzeSymbol, SVMpredict
 from .bayesian import BayesianCurveFitting
 from .rsi import get_RSI
+from .macd import get_MACD
+
 import time
 # import sys
 # sys.path.append('..')
-from config import *
+from ..config import *
 import mysql.connector
 import sqlite3
 import datetime
 
 
-def function(stockname):
-    # moving average
+def function(stockname, interval):
+    # moving average result
     print('get moving average result:')
-    # pred_price = round(analyzeSymbol(stockname, 5),2)
+    pred_price = round(analyzeSymbol(stockname, 5),2)
 
-    # # get Bayesian Prediction
-    # print('get Bayesian result:')
+    # # get Bayesian prediction
+    # print('get Bayesian prediction:')
     # model = BayesianCurveFitting()
     # data = model.read_csv(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv', y_in_column=4)
-    # # get Bayesian Prediction
     # tmp = model.predict(y_vec=data)
     # returnBayesian = tmp[0]
     # variance = tmp[1]
     # print(returnBayesian)
     #
     # # get SVM prediction
-    # print('get SVM result:')
+    # print('get SVM prediction:')
     # returnSVM = SVMpredict(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv')
     # print(returnSVM)
-    #
-    # get RSI prediction
+
+    # get RSI results
     print('get RSI result:')
     RSI = get_RSI(stockname)
+
+    # get MACD results
+    print('get MACD result:')
+    MACD = get_MACD(stockname, interval)
 
     # connect database
     print('connect sqlite db')
@@ -131,4 +136,4 @@ def function(stockname):
 
 
 # if __name__ == '__main__':
-function('AAPL')
+function('AAPL', 'daily')
