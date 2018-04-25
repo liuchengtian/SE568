@@ -1,13 +1,17 @@
-from neuralNetwork import NeuralNetwork
+from .neural_network import NeuralNetwork
 import time
-import urllib as urllib2
+import sys
+if sys.version_info[0] == 2:
+    from urllib import urlopen
+else:
+    from urllib.request import urlopen
 import subprocess
 import numpy as np
 from sklearn.svm import SVR
 from datetime import datetime
 from itertools import islice
 
-## ================================================================
+# ================================================================
 
 def normalizePrice(price, minimum, maximum):
     return ((2*price - (maximum + minimum)) / (maximum - minimum))
@@ -15,7 +19,7 @@ def normalizePrice(price, minimum, maximum):
 def denormalizePrice(price, minimum, maximum):
     return (((price*(maximum-minimum))/2) + (maximum + minimum))/2
 
-## ================================================================
+# ================================================================
 
 def rollingWindow(seq, windowSize):
     it = iter(seq)
@@ -50,7 +54,7 @@ def getMaximums(values, windowSize):
 
     return maximums
 
-## ================================================================
+# ================================================================
 
 def getTimeSeriesValues(values, window):
     movingAverages = getMovingAverage(values, window)
@@ -67,27 +71,27 @@ def getTimeSeriesValues(values, window):
 
     return returnData
 
-## ================================================================
+# ================================================================
 
 def getHistoricalData(stockSymbol):
     historicalPrices = []
 
     # login to API
-    urllib2.urlopen("http://api.kibot.com/?action=login&user=guest&password=guest")
+    urlopen("http://api.kibot.com/?action=login&user=guest&password=guest")
 
     # get 14 days of data from API (business days only, could be < 10)
     url = "http://api.kibot.com/?action=history&symbol=" + stockSymbol + "&interval=daily&period=365&unadjusted=1&regularsession=1"
-    apiData = urllib2.urlopen(url).read().decode("utf-8").split("\n")
+    apiData = urlopen(url).read().decode("utf-8").split("\n")
     #print apiData
     for line in apiData:
-        if(len(line) > 0):
+        if len(line) > 0:
             tempLine = line.split(',')
             price = float(tempLine[1])
             historicalPrices.append(price)
 
     return historicalPrices
 
-## ================================================================
+# ================================================================
 
 
 def getTrainingData(stockSymbol,term):
@@ -117,7 +121,7 @@ def getPredictionData(stockSymbol, term):
 
     return predictionData
 
-## ================================================================
+# ================================================================
 
 def analyzeSymbol(stockSymbol, term):
     startTime = time.time()
@@ -144,13 +148,13 @@ def analyzeSymbol(stockSymbol, term):
 
     return returnData
 
-## ================================================================
+# ================================================================
 
 def getBayesianCurveFit(path, stock_name, M, day_in_future):
-    #path = 'C:/Users/wangd/workspace/PredictStock/src/' #path of .csv file
-    #stock_name = 'EBAY.csv'
-    #M = '3'
-    #day_in_future = '1' # 1 means tomorrow
+    # path = 'C:/Users/wangd/workspace/PredictStock/src/' #path of .csv file
+    # stock_name = 'EBAY.csv'
+    # M = '3'
+    # day_in_future = '1' # 1 means tomorrow
     #    'java'+'-jar'+'name of .jar u want to run' + 'path of your .csv file' + 'stockname.cvs'+'order of polynomial'+'days in the future'+'number of args'
     cmd = ['java', '-jar', 'PredictStock.jar', path , stock_name, M, day_in_future, '5']
     output = subprocess.Popen(cmd, stdout = subprocess.PIPE ).communicate()[0]
@@ -158,10 +162,9 @@ def getBayesianCurveFit(path, stock_name, M, day_in_future):
     output = round(float(result[1]), 2)
     return output
 
-##predict stock use SVM choose kernal='rbf'
+# predict stock use SVM choose kernal='rbf'
 
-def SVMpredict(stockname):
-    filename = stockname + '_historical.csv'
+def SVMpredict(filename):
     input_file = open(filename)
     X = []
     y = []
@@ -177,11 +180,11 @@ def SVMpredict(stockname):
             tempLine = line.split(',')
             price = float(tempLine[1])
             y.append(price)
-#transfer form of data
+    # transfer form of data
     X = np.asarray(X)
     X = np.reshape(X, (len(X), 1))
     y = np.asarray(y)
-    #data to predict
+    # data to predict
     temp = X[-1]
     predict_X = [temp + 1, temp + 2, temp + 3, temp + 4, temp + 5]
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
@@ -189,6 +192,7 @@ def SVMpredict(stockname):
     y_preRbf = svr_rbf.predict(predict_X)
     y_preRbf = np.around(y_preRbf, decimals=2)
     return [predict_X, y_preRbf]
+
 
 if __name__ == "__main__":
     print(analyzeSymbol("GOOG",5))

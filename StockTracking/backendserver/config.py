@@ -17,15 +17,14 @@ ts = TimeSeries(key=api_key, output_format='pandas', retries=20)
 
 # using alpha vantage finance api to save data into a pandas dataframe
 stocks = ['AAPL', 'GOOGL', 'NVDA', 'AABA', 'AMZN', 'MSFT', 'BAC', 'NKE', 'NFLX', 'FB']
-# stocks = ['GOOGL']
 
 # define database engines
-engine = create_engine(
+sqlite_engine = create_engine(
     'sqlite:///database.db',
     convert_unicode=True,
     echo=True
 )
-default_engine = create_engine(
+MYSQL_engine = create_engine(
     'mysql+mysqlconnector://' + User + ':' + PassWord +
     '@' + Host + ':' + Port + '/' + Database, echo=False)
 

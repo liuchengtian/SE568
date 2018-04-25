@@ -2,5 +2,5 @@
 # -*- coding: utf-8 -*-
 
 # init
-from . import data
-from . import rss
+# from . import data
+# from . import rss

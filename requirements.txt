@@ -2,10 +2,13 @@ flask
 sqlalchemy
 mysql-connector-python
 feedparser
-alpha_vantage
-matplotlib
-pandas
 flask_wtf
 wtforms
 flask_login
 flask_sqlalchemy
+scipy
+numpy
+pandas
+matplotlib
+sklearn
+alpha_vantage

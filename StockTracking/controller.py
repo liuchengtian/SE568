@@ -2,7 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask import request, render_template, jsonify
 from flask_wtf import FlaskForm
-#from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, BooleanField
@@ -10,11 +10,12 @@ from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from .backendserver.rss import rss
-from .backendserver.data import read_file
+from .backendserver.data import read_file, query_info
+
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
-# Bootstrap(app)
+Bootstrap(app)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 db = SQLAlchemy(app)
@@ -95,6 +96,7 @@ def stock():
     print('in stock')
     return render_template('mainPage.html')
 
+
 @app.route('/stock?ticker=<ticker_id>', methods=['GET', 'POST'])
 def user(ticker_id):
     print("have ticker name")
@@ -129,3 +131,10 @@ def get_price():
     ticker = request.form.get('ticker')
     print('get price about ' + ticker)
     return jsonify(read_file.getStock(ticker))
+
+
+@app.route('/backend/get_prediction', methods=['GET', "POST"])
+def get_prediction():
+    ticker = request.form.get('ticker')
+    query_info.function(ticker)
+    return

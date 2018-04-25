@@ -1,7 +1,7 @@
 import os
 import mysql.connector  # using mysql connector should install it first(python 2.7/3.3/3.4)
 import pandas as pd
-from sqlalchemy.types import VARCHAR
+from sqlalchemy.types import VARCHAR, DateTime
 import time
 import matplotlib.pyplot as plt
 from StockTracking.backendserver.config import *
@@ -46,7 +46,7 @@ def init_db():
         cursor.execute(create_historical_data)  # create table
 
 
-def create_db(stock=stocks, engine=engine, realtime_loading=True):
+def create_db(stock=stocks, engine=sqlite_engine, realtime_loading=True):
     # create database using mysql or sqlite engine
     print('Reading Data and Putting them in Database. Exit with Ctrl+C.')
     try:
@@ -58,8 +58,10 @@ def create_db(stock=stocks, engine=engine, realtime_loading=True):
             if not os.path.exists('csv'):
                 os.makedirs('csv')
             df.to_csv('csv/' + stock[i] + '_historical.csv')
-            df.to_sql(name=stock[i] + '_historical', con=engine, if_exists='replace',
-                      dtype={'date': VARCHAR(df.index.get_level_values('date').str.len().max())})
+            # df.to_sql(name=stock[i] + '_historical', con=engine, if_exists='replace',
+            #           dtype={'date': VARCHAR(df.index.get_level_values('date').str.len().max())})
+            df.to_sql(name=stock[i] + '_historical', con=engine, if_exists='replace')
+
 
         # ============= code for real-time quotes ==============
         print('Loading real-time data.')
@@ -84,7 +86,7 @@ def create_db(stock=stocks, engine=engine, realtime_loading=True):
                 with open('csv/' + stock[i] + '_realtime.csv', 'a') as file:
                     df_newest.to_csv(file, header=False, index=True)
                 df_newest.to_sql(name=stock[i] + '_realtime', con=engine, if_exists='append')
-            time.sleep(10)
+            time.sleep(3)
 
     except KeyboardInterrupt:
         print('User asked to exit')
@@ -128,12 +130,12 @@ def test_plot(df):
 
 def main():
     init_db()
-    create_db(stock=stocks, engine=engine, realtime_loading=False)
+    create_db(stock=stocks, engine=sqlite_engine, realtime_loading=True)
 
 
-def add_stock(stock):
+def add_stock(stockname):
     # add new stock to csv and database if necessary
-    create_db(stock=[stock], engine=engine, realtime_loading=False)
+    create_db(stock=[stockname], engine=sqlite_engine, realtime_loading=False)
 
 
 if __name__ == '__main__':
