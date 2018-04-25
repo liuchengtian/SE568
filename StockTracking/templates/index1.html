@@ -36,9 +36,7 @@
           <li>
             <a href="signup">Sign Up</a>
           </li>
-          <li>
-            <a href="">Logout</a>
-          </li>
+
         </ul>
       </div>
     </div>
@@ -55,7 +53,13 @@
       </nav>
   </div>
 
-
+<!-- ECharts -->
+  <script src="{{ url_for('static', filename='./vendors/echarts/dist/echarts.js') }}"></script>
+  <script src="{{ url_for('static', filename='./vendors/echarts/map/js/world.js') }}"></script>
+  <!-- jQuery -->
+  <script src="{{ url_for('static', filename='./vendors/jquery/dist/jquery.min.js') }}"></script>
+  <!-- Custom Theme Scripts -->
+  <script src="{{ url_for('static', filename='./build/js/mainPage.js') }}"></script>
 
 
     {% block footer %}
