@@ -567,6 +567,70 @@ $("#subStockName").click(function(){
   window.event.returnValue=false;
 });
 
+function initial_kpi(){
+  if($('#average_price').length){
+    var urlPrice = "backend/get_average_price";
+    var input = {'ticker': getUrlParameter('ticker')};
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
+     $.ajax({type: "post",
+        url: urlPrice,
+        data: input,
+        dataType: 'json',
+        success: function(data){
+            console.log(data)
+            $('#average_price').html(data.data.toFixed(2));
+            },
+        fail: function(){
+            console.log('query fail.');
+          }
+        });
+  }
+  
+  if($('#highest_price').length){
+    var urlPrice = "backend/get_highest_price";
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
+     $.ajax({type: "post",
+        url: urlPrice,
+        data: input,
+        dataType: 'json',
+        success: function(data){
+            console.log(data)
+            $('#highest_price').html(data.data.toFixed(2));
+            },
+        fail: function(){
+            console.log('query fail.');
+          }
+        });
+  }  
+
+  if($('#lowest_price').length){
+    var urlPrice = "backend/get_lowest_price";
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
+     $.ajax({type: "post",
+        url: urlPrice,
+        data: input,
+        dataType: 'json',
+        success: function(data){
+            console.log(data)
+            $('#lowest_price').html(data.data.toFixed(2));
+            },
+        fail: function(){
+            console.log('query fail.');
+          }
+        });
+  }  
+    
+}
+
 
 //initial table and charts
 
@@ -608,6 +672,8 @@ $( document ).ready(function() {
                 }
               });
   }
+
+  initial_kpi();
   if($('#stockNews').length){
     //updata News
     var url = "backend/get_news";

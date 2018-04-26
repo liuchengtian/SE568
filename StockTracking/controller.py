@@ -296,19 +296,25 @@ def get_yearRange():
 @app.route('/backend/get_highest_price', methods=['GET', 'POST'])
 def get_highest_price():
     ticker = request.form.get('ticker')
-    return query_info.query_info_highest(ticker)
+    result=dict()
+    result['data'] = query_info.query_info_highest(ticker)
+    return jsonify(result)
 
 
 @app.route('/backend/get_average_price', methods=['GET', 'POST'])
 def get_average_price():
     ticker = request.form.get('ticker')
-    return query_info.query_info_average(ticker)
+    result=dict()
+    result['data'] = query_info.query_info_average(ticker)
+    return jsonify(result)
 
 
 @app.route('/backend/get_lowest_price', methods=['GET', 'POST'])
 def get_lowest_price():
     ticker = request.form.get('ticker')
-    return query_info.query_info_lowest(ticker)
+    result=dict()
+    result['data'] = query_info.query_info_lowest(ticker)
+    return jsonify(result)
 
 
 @app.route('/backend/add_favorite', methods=['GET', 'POST'])
