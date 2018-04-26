@@ -8,7 +8,7 @@ stockNameSet = ['AABA', 'AAPL', 'AMZN', 'BAC', 'FB', 'GOOGL', 'MSFT', 'NFLX', 'N
 def getStock(sys):
     dirname = os.path.dirname(__file__)
     path = '/csv/'+sys+'_historical.csv'
-    print(dirname)
+    # print(dirname)
     dm = DM.DataManager(dirname+path)
     typeSet = dm.column_names
     dataSet = dict()
@@ -57,6 +57,16 @@ def getStocks():
     result['data'] = resultSet
     result['colName'] = typeSet
     return result
+
+
+def read_historical(stockSymbol, from_time, to_time):
+    dirname = os.path.dirname(__file__)
+    path = '/csv/' + stockSymbol + '_historical.csv'
+    dm = DM.DataManager(dirname + path)
+    column_name = dm.column_names
+    historical_prices = dm.data[column_name[5]].tolist()
+    # print(historical_prices)
+    return historical_prices
 
 
 if __name__ == '__main__':

@@ -140,7 +140,7 @@ def logout():
 
 @app.route('/stock', methods=['GET', 'POST'])
 def stock():
-    print('in stock')
+    # print('in stock')
     return render_template('mainPage.html')
 
 
@@ -186,9 +186,21 @@ def get_price():
     return jsonify(read_file.getStock(ticker))
 
 
-@app.route('/backend/get_prediction', methods=['GET', "POST"])
-def get_prediction():
+@app.route('/backend/get_rsi', methods=['GET', "POST"])
+def get_rsi():
     ticker = request.form.get('ticker')
-    interval = request.form.get('interval')
-    query_info.function(ticker, interval)
+    time_type = request.form.get('time_type')
+    from_time = request.form.get('from_time')
+    to_time = request.form.get('to_time')
+    interval = 'daily'
+    query_info.query_info_rsi(ticker, time_type, from_time, to_time)
     return
+
+
+@app.route('/backend/get_macd', methods=['GET', "POST"])
+def get_macd():
+    ticker = request.form.get('ticker')
+    time_type = request.form.get('time_type')
+    from_time = request.form.get('from_time')
+    to_time = request.form.get('to_time')
+

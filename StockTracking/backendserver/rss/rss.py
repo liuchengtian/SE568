@@ -6,12 +6,6 @@ def feed(ticker: str):
     # get rss
     feeds = feedparser.parse(rss_url)
     rss = dict()
-    # get version of rss
-    # print(feeds.version)
-
-    # get http head
-    # print(feeds.headers)
-    # print(feeds.headers.get('Content-Type'))
 
     # rss title
     rss['title'] = feeds['feed']['title']
@@ -20,7 +14,7 @@ def feed(ticker: str):
     # rss subtitle
     rss['sub title'] = feeds['feed']['subtitle']
     # number of articles
-    print(feeds)
+    # print(feeds)
     n = len(feeds['entries'])
     rss['number'] = n
     rss['article'] = [dict() for i in range(n)]
