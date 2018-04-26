@@ -193,7 +193,7 @@ def get_rsi():
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
     data = query_info.query_info_rsi(ticker, time_type, from_time, to_time)
-    date = query_info.query_info_date(from_time, to_time)
+    date = query_info.query_info_date(ticker, time_type, from_time, to_time)
     assert(len(data) == len(date))
     result = {
         'rsi': data,
@@ -213,8 +213,6 @@ def get_macd():
     MACD = data['MACD']
     MACD_Signal = data['MACD_Signal']
     date = query_info.query_info_date(ticker, time_type, from_time, to_time)
-    print(len(date))
-    print(len(data['MACD_Hist']))
     assert(len(data['MACD_Hist']) == len(date))
     result = {
         'MACD': MACD,
@@ -222,7 +220,7 @@ def get_macd():
         'MACD_Hist': MACD_Hist,
         'date': date
     }
-
+    return result
 
 @app.route('/backend/get_moving_avg', methods=['GET', "POST"])
 def get_moving_avg():
