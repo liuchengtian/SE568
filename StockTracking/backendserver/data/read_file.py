@@ -17,7 +17,7 @@ def getStock(sys):
     for item in typeSet:
         dataSet[item] = []
     lenSize, itemSize = dm.data.shape
-    for i in range(100):
+    for i in range(lenSize):
         dataItem = dm.data.iloc[i, :]
         dateSet.append(dataItem[0])
         for j in range(itemSize):

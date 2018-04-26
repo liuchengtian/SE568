@@ -354,6 +354,101 @@ $( document ).ready(function() {
           }
         }); 
   }
+  if($('#SMA_chart').length){
+    var urlPrice = "backend/get_price";
+    var input = {'ticker': getUrlParameter('ticker')};
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
+     $.ajax({type: "post",
+        url: urlPrice,
+        data: input,
+        dataType: 'json',
+        success: function(data){
+            console.log(data)
+            //update echart
+            var echartLine = echarts.init(document.getElementById('SMA_chart'), theme);
+            echartLine.setOption({
+                title: {
+                  text: getUrlParameter('ticker'),
+                  subtext: 'Line Chart'
+                },
+                tooltip: {
+                  trigger: 'axis'
+                },
+                legend: {
+                  x: 220,
+                  y: 40,
+                  data: ['price','SMA1','SMA2']
+                },
+                toolbox: {
+                  show: true,
+                  feature: {
+                    magicType: {
+                      show: true,
+                      title: {
+                        line: 'Line',
+                        bar: 'Bar',
+                        stack: 'Stack',
+                        tiled: 'Tiled'
+                      },
+                      type: ['line', 'bar', 'stack', 'tiled']
+                    },
+                    restore: {
+                      show: true,
+                      title: "Restore"
+                    },
+                    saveAsImage: {
+                      show: true,
+                      title: "Save Image"
+                    }
+                  }
+                },
+                calculable: true,
+                xAxis: [{
+                  type: 'category',
+                  boundaryGap: false,
+                  data: [1,2,3,5,6,7]
+                }],
+                yAxis: [{
+                  type: 'value'
+                }],
+                series: [{
+                  name: 'price',
+                  type: 'line',
+                  smooth: true,
+                  itemStyle: {
+                  normal: {
+                  }
+                  },
+                  data: [10, 12, 21, 54, 260, 830, 710]
+                }, {
+                  name: 'SMA1',
+                  type: 'line',
+                  smooth: true,
+                  itemStyle: {
+                  normal: {
+                  }
+                  },
+                  data: [30, 182, 434, 791, 390, 30, 10]
+                }, {
+                  name: 'SMA2',
+                  type: 'line',
+                  smooth: true,
+                  itemStyle: {
+                  normal: {
+                  }
+                  },
+                  data: [1320, 1132, 601, 234, 120, 90, 20]
+                }]
+              });
+            },
+        fail: function(){
+            console.log('query fail.');
+          }
+        });
+  }
 
   if($('#echart_line').length){
     //get data
