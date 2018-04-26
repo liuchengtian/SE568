@@ -3,7 +3,6 @@ import mysql.connector  # using mysql connector should install it first(python 2
 import pandas as pd
 from sqlalchemy.types import VARCHAR, DateTime
 import time
-import matplotlib.pyplot as plt
 from StockTracking.backendserver.config import *
 
 
@@ -117,15 +116,6 @@ def get_hist_data(stock):
         df['sym'] = meta['2. Symbol']
         historical.append(df)
     return historical
-
-
-def test_plot(df):
-    plt.figure()
-    plt.plot(df['4. close'].iloc[-260:], range(10))
-    # plt.xticks(np.arange(10))
-    plt.title('Times Series for the ' + df['sym'][0] + ' stock')
-    plt.show()
-    plt.close()
 
 
 def main():
