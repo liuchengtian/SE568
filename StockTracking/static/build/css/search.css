@@ -10,6 +10,10 @@
     border-color: #2a3f54;
 }
 
+.div{
+  background: #2a3f54;
+}
+
 .search_footer {
   background-color: #2a3f54;
 
@@ -23,9 +27,9 @@
  .search_title {
     margin: 100px auto;
     text-align:center;
-    color: #FBAF41;
+    color: #ededed;
     width:300px;
-    font-size:2em;
+    font-size:5em;
     margin-bottom:0;
 
   }
@@ -42,3 +46,32 @@
    .search-btn {
      width:60px;
    }
+
+.navbar-brand{
+  background: #2a3f54;
+  color: #ededed
+}
+.nav{
+  color: #ededed;
+}
+.navbar-nav{
+  color: #ededed;
+}
+} 
+.navbar-right{
+  color: #ededed;
+}
+
+.navbar-default .navbar-collapse, .navbar-default .navbar-form{
+  background: #2a3f54;
+}
+.nav.navbar-nav>li>a{
+  color: #ededed;
+}
+.footer {
+  
+  background: #2a3f54;
+  color:#ededed;
+  font-size: 9px;
+  text-align: right;
+}
