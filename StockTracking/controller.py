@@ -251,7 +251,13 @@ def get_neural_network():
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
-    data = query_info.query_info_neural_network(ticker, time_type, from_time, to_time)
+    prediction1, action1, prediction2, action2 = query_info.query_info_neural_network(ticker, time_type, from_time, to_time)
+    return jsonify({
+        'prediction1': prediction1,
+        'action1': action1,
+        'prediction2': prediction2,
+        'action2': action2
+    })
 
 
 @app.route('/backend/get_bayesian', methods=['GET', "POST"])
@@ -271,5 +277,12 @@ def get_svm():
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
     data = query_info.query_info_svm(ticker)
-    return data
+    prediction = data[0].tolist()
+    # return jsonify({
+    #     'day1': prediction[0],
+    #     'day2': prediction[1],
+    #     'day3': prediction[2],
+    #     'day4': prediction[3],
+    #     'day5': prediction[4],
+    # })
 

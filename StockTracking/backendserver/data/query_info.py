@@ -57,14 +57,14 @@ def query_info_rsi(stockname, time_type, from_time, to_time):
     return rsi
 
 
-def query_info_svm(stockname):
+def query_info_svm(stockname, time_type=None, from_time=None, to_time=None):
     # get SVM prediction
     print('get SVM prediction:')
     svm = SVMpredict(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv')
     return svm
 
 
-def query_info_bayesian(stockname):
+def query_info_bayesian(stockname, time_type=None, from_time=None, to_time=None):
     # get Bayesian prediction
     print('get Bayesian prediction:')
     model = BayesianCurveFitting()
@@ -151,9 +151,9 @@ def query_info_macd(stockname, time_type, from_time, to_time):
     print('get MACD result:')
     MACD = get_MACD(stockname, time_type, from_time, to_time)
     # pandas
-    return MACD
+    return MACD.loc[from_time:to_time]
 
 
 # if __name__ == '__main__':
 # function('AAPL', 'daily')
-# print(query_info_date('AAPL', 'historical', '2003-01-01', '2004-01-01'))
+# print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
