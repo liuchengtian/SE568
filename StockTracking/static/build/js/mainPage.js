@@ -626,8 +626,51 @@ function initial_kpi(){
             console.log('query fail.');
           }
         });
-  }  
-    
+  } 
+
+  if($('#pred_bayesian').length){
+    var urlPrice = "backend/get_bayesian";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+    console.log(input);
+    if (input === undefined){
+    var input = {'ticker': 'AMZN'};
+    }
+    $.ajax({type: "post",
+    url: urlPrice,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        $('#pred_bayesian').html(data.bayesian.toFixed(2));
+        },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                }
+    });
+  } 
+  if($('#pred_NN1').length){
+    var urlPrice = "backend/get_neural_network";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+    console.log(input);
+    if (input === undefined){
+    var input = {'ticker': 'AMZN'};
+    }
+    $.ajax({type: "post",
+    url: urlPrice,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        $('#pred_NN1').html(data.prediction1.toFixed(2));
+        $('#action_NN1').html(data.action1);
+        $('#pred_NN2').html(data.prediction2.toFixed(2));
+        $('#action_NN2').html(data.action2);
+        },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                }
+    });
+  }   
 }
 
 function initial_user_fav(){
