@@ -212,8 +212,10 @@ def get_macd():
     MACD_Hist = data['MACD_Hist']
     MACD = data['MACD']
     MACD_Signal = data['MACD_Signal']
-    date = query_info.query_info_date(from_time, to_time)
-    assert(len(data) == len(date))
+    date = query_info.query_info_date(ticker, time_type, from_time, to_time)
+    print(len(date))
+    print(len(data['MACD_Hist']))
+    assert(len(data['MACD_Hist']) == len(date))
     result = {
         'MACD': MACD,
         'MACD_Signal': MACD_Signal,
@@ -273,3 +275,8 @@ def get_svm():
     data = query_info.query_info_svm(ticker)
     return data
 
+@app.route('/backend/get_yearRange', methods=['GET', 'POST'])
+def get_yearRange():
+    ticker = request.form.get('ticker')
+    print('get yearRange')
+    return jsonify(read_file.getYearRange(ticker))

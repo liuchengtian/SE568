@@ -622,6 +622,30 @@ $( document ).ready(function() {
         });
   }
 
+  if($('#rangeYear').length){
+    var urlRange = 'backend/get_yearRange';
+    var input = {'ticker': getUrlParameter('ticker')};
+    $.ajax({type: "post",
+              url: urlRange,
+              data: input,
+              dataType: 'json',
+              success: function(data){
+                  console.log('in setting echarts line range');
+                  //update echart
+                  $('#rangeYear').ionRangeSlider({
+                    type: "double",
+                    min: '12/31/2015',
+                    max: '12/31/2015',
+                    grid: true,
+                    force_edges: true
+                  });
+              },
+              error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    alert("Status: " + textStatus + "Error: " + errorThrown); 
+                }
+              });
+  }
+
   if($('#echart_line').length){
     //get data
     var urlPrice = "backend/get_price";

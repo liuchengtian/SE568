@@ -68,6 +68,23 @@ def read_historical(stockSymbol, from_time, to_time):
     # print(historical_prices)
     return historical_prices
 
+def getYearRange(stockSymbol):
+    dirname = os.path.dirname(__file__)
+    path = '/csv/' + stockSymbol + '_historical.csv'
+    print(dirname)
+    dm = DM.DataManager(dirname + path)
+    #initial 
+    dateSet = []
+    lenSize, itemSize = dm.data.shape
+    for i in range(lenSize):
+        dataItem = dm.data.iloc[i, :]
+        dateSet.append(dataItem[0])
+    resultSet = dict()
+    resultSet['min'] = dateSet[0]
+    resultSet['max'] = dateSet[lenSize-1]
+    print(resultSet)
+    return resultSet
+
 
 if __name__ == '__main__':
     print(getStock("AMZN"))
