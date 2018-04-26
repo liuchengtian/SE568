@@ -1,4 +1,5 @@
 {% block head %}
+
 <head>
 	<title>Stock</title>
 	<meta charset="utf-8">
@@ -20,6 +21,10 @@
     <link href="{{ url_for('static', filename='./vendors/jqvmap/dist/jqvmap.min.css') }}" rel="stylesheet"/>
     <!-- bootstrap-daterangepicker -->
     <link href="{{ url_for('static', filename='./vendors/bootstrap-daterangepicker/daterangepicker.css') }}" rel="stylesheet">
+    <!--admin css-->
+    <link href="{{ url_for('static', filename='./build/css/admin.css') }}" rel="stylesheet"/>
+    <!--footer css-->
+        <link href="{{ url_for('static', filename='./build/css/search.css') }}" rel="stylesheet"/>
 
     <!-- Datatables -->
     <link href="{{ url_for('static', filename='./vendors/datatables.net-bs/css/dataTables.bootstrap.min.css') }}" rel="stylesheet">
@@ -39,7 +44,7 @@
     <!--side bar-->
     <div class="main_container">
         <div class="col-md-3 left_col">
-          <div class="left_col scroll-view">
+          <div class="left_col scroll-view" id="leftSideMenu">
             <div class="navbar nav_title" style="border: 0;">
               <a href="index" class="site_title"><i class="fa fa-paw"></i> <span>Stock Tracking</span></a>
             </div>
@@ -48,12 +53,12 @@
 
             <!-- menu profile quick info -->
             <div class="profile clearfix">
-              <div class="profile_pic">
+              <div class="profile_pic" id="userImg">
                 <img src="{{ url_for('static', filename='./images/vicky.jpg') }}" alt="..." class="img-circle profile_img">
               </div>
               <div class="profile_info">
-                <span>Welcome,</span>
-                <h2>Vicky Duan</h2>
+
+                <span id='userName'>{{ name }}</span>
               </div>
             </div>
             <!-- /menu profile quick info -->
@@ -80,6 +85,8 @@
                 <ul class="nav side-menu">
                   <li><a href='user' ><i class="fa fa-sign-in"></i> User <span class="fa fa-chevron-down"></span></a>
                   </li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+
                 </ul>
               </div>
             </div>
@@ -109,11 +116,12 @@
     {% endblock %}
     {% block footer %}
     <!-- footer content -->
-    <footer>
-    <div class="pull-right">
-    <span>Copyright ©2018</span>, Chaoya Yan, Yixuan Duan, Zhiwen Wang, Chengtian Liu, Shuaishuai Sun</a>
-    </div>
-    <div class="clearfix"></div>
+    <footer class="search_footer">
+        <div class="search_intro">
+            <p><span style="color: #FADA5B">Copyright ©2018</span>, Chaoya Yan, Yixuan Duan, Zhiwen Wang, Chengtian Liu, Shuaishuai Sun, Rutgers, The State University of New Jersey,
+                    an equal opportunity, affirmative action institution. All rights reserved.</p></br>
+
+        </div>
     </footer>
     <!-- /footer content -->
     {% endblock %}

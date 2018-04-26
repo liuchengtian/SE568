@@ -279,10 +279,47 @@ $("#subStockName").click(function(){
 
 //initial table and charts
 
-//updata News
+
 $( document ).ready(function() {
 	console.log( "ready!" );
+  //update UserID
+  if($('#userID').length){
+    var input = {'user': 123};
+    var urlGetUser = 'backend/get_userId';
+    $.ajax({type: "post",
+    url: urlGetUser,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        $('#userID').html(data.name);
+        $('#signUp').html('Logout');
+        $('#signUp').attr("href","logout");
+        $('#sign')
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                }
+              });
+  }
+  if($('#userName').length){
+    var urlGetUser = 'backend/get_userId';
+    $.ajax({type: "post",
+    url: urlGetUser,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        $('#userName').html(data.name);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                    $('#leftSideMenu').empty();
+                }
+              });
+  }
   if($('#stockNews').length){
+    //updata News
     var url = "backend/get_news";
     var input = {'ticker': getUrlParameter('ticker')};
     console.log(input);

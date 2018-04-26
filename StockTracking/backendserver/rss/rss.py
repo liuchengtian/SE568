@@ -35,5 +35,5 @@ def feed(ticker: str):
     return rss
 
 
-if __name__ == '__main__':
-    print(feed('AMZN'))
+# if __name__ == '__main__':
+#     print(feed('AMZN'))

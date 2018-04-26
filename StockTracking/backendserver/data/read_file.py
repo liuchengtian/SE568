@@ -45,12 +45,12 @@ def getStocks():
     typeSet = None
     result = dict()
     for item in stockNameSet:
-        path = '/csv/'+item+'_realtime.csv'
+        path = '/csv/'+item+'_historical.csv'
         dm = DM.DataManager(dirname+path)
         dataItem = dict()
         typeSet = dm.column_names
         lenSize,itemSize = dm.data.shape
-        tempItem = dm.data.iloc[0, :]
+        tempItem = dm.data.iloc[lenSize-1, :]
         for j in range(itemSize):
             dataItem[typeSet[j]]=tempItem[j]
         resultSet.append(dataItem)

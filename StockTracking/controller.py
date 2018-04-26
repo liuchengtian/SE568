@@ -8,15 +8,22 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
-from .backendserver.rss import rss
-from .backendserver.data import read_file, query_info
+from flask_login import AnonymousUserMixin
+import feedparser
+import csv
+import os
 
+
+from StockTracking.backendserver.rss import rss
+from StockTracking.backendserver.data import read_file,query_info
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
 Bootstrap(app)
 app.config['SECRET_KEY'] = 'Thisissupposedtobesecret!'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'database.db')
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -25,9 +32,19 @@ login_manager.login_view = 'login'
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.column(db.String(15))
-    email = db.column(db.String(50))
-    password = db.column(db.String(80))
+    username = db.Column(db.String(15), unique=True)
+    email = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(80))
+    #authenticated = db.Column(db.Boolean, default=False)
+
+    def is_authenticated(self):
+        """Check the user whether logged in."""
+
+        # Check the User's instance whether Class AnonymousUserMixin's instance.
+        if isinstance(self, AnonymousUserMixin):
+            return False
+        else:
+            return True
 
 
 @login_manager.user_loader
@@ -42,7 +59,7 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(min=4, max=15)])
+    email = StringField('email', validators=[InputRequired(), Email(message='Invalid email'), Length(min=4, max=50)])
     username = StringField('username', validators=[InputRequired(), Length(min=4, max=15)])
     password = StringField('password', validators=[InputRequired(), Length(min=8, max=80)])
 
@@ -50,6 +67,18 @@ class RegisterForm(FlaskForm):
 @app.route('/', methods=['GET', 'POST'])
 def start():
     return render_template('index1.html')
+
+@app.route('/backend/get_userId', methods=['GET', 'POST'])
+def get_userId():
+    if current_user.is_authenticated:
+        userInfo = dict()
+        userInfo['id'] = current_user.id
+        userInfo['name'] = current_user.username
+        print(userInfo)
+        return jsonify(userInfo)
+    else:
+        print("in none")
+        return None
 
 
 @app.route('/index', methods=['GET', 'POST'])
@@ -59,18 +88,32 @@ def index():
 
 @app.route('/login',  methods=['GET', 'POST'])
 def login():
+    print(current_user.is_authenticated)
+    if current_user.is_authenticated:
+        return redirect(url_for('start'))
     form = LoginForm()
 
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user:
+            #if user.password == form.password.data:
             if check_password_hash(user.password, form.password.data):
-                logout_user(user, remember=form.remember.data)
-                return redirect(url_for('dashboard'))
+                login_user(user, remember=form.remember.data)
+                return redirect(url_for('user', ticker_id=user.id))
 
         return '<h1>Invalid username or password!</h1>'
 
     return render_template('login.html', form=form)
+
+
+def is_logined():
+    if current_user.is_authenticated:
+        return True
+    return False
+
+
+def user_info():
+    return current_user
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -79,11 +122,11 @@ def signup():
 
     if form.validate_on_submit():
         hashed_password = generate_password_hash(form.password.data, method='sha256')
-        new_user = User(username=form.username.data, email=form.email.data, password=form.password.data)
+        new_user = User(username=form.username.data, email=form.email.data, password=hashed_password)
         db.session.add(new_user)
         db.session.commit()
 
-        return '<h1> New user has been created!</h1>'
+        return redirect(url_for('login'))
 
     return render_template('signup.html', form=form)
 
@@ -92,7 +135,7 @@ def signup():
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('start'))
 
 
 @app.route('/stock', methods=['GET', 'POST'])
@@ -107,9 +150,16 @@ def stock_with_id(ticker_id):
     return render_template('mainPage.html')
 
 
-@app.route('/user', methods=['GET', 'POST'])
-def user():
-    return render_template('userPage.html')
+@app.route('/user?ticker_id=<ticker_id>', methods=['GET', 'POST'])
+def user(ticker_id):
+    print("have ticker name")
+    print(ticker_id)
+    return redirect(url_for('start'))
+
+
+# @app.route('/user', methods=['GET', 'POST'])
+# def mainPage():
+#     return render_template('userPage.html')
 
 
 @app.route('/stocks', methods=['GET', 'POST'])
