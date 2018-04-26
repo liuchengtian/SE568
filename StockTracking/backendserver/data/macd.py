@@ -1,8 +1,15 @@
 from ..config import *
 
 
-def get_MACD(stockname, interval):
-    data = ti.get_macd(symbol=stockname, interval=interval)
+def get_MACD(stockname, time_type, from_time, to_time):
+    if time_type == 'historical':
+        interval = 'daily'
+    else:
+        interval = '1min'
+    data = ti.get_macd(symbol=stockname, interval=interval)[0]
+    # print(data.loc[from_time:to_time])
+    # data is pandas with columns
+    # date(index) MACD_Signal MACD_Hist MACD
     return data
 
 

@@ -2,6 +2,8 @@ from .analyzer import analyzeSymbol, SVMpredict
 from .bayesian import BayesianCurveFitting
 from .rsi import get_RSI
 from .macd import get_MACD
+from .data_manager import DataManager
+
 
 import time
 # import sys
@@ -11,129 +13,132 @@ import mysql.connector
 import sqlite3
 import datetime
 
+# connect database
+print('connect sqlite db')
+conn = sqlite3.connect('StockTracking/backendserver/data/database.db')
+cursor = conn.cursor()
 
-def function(stockname, interval):
+data_types = [
+    '1. Open',
+    '2. High',
+    '3. Low',
+    '4. Close',
+    '5. Volume',
+]
+
+
+def query_info_date(stockname, time_type, from_time, to_time):
+    query_date = """
+        SELECT date
+        FROM {__stockname__}_{__time_type__}
+        WHERE date >= {__from_time__} and date <= {__to_time__}
+        order by date ASC;
+        """
+    date = cursor.execute(query_date.format(__stockname__=stockname, __time_type__=time_type,
+                                            __from_time__=from_time, __to_time__=to_time))
+    return date
+
+
+def query_info_rsi(stockname, time_type, from_time, to_time):
+    # get RSI results
+    print('get RSI result:')
+    rsi = get_RSI(stockname, time_type, from_time, to_time)
+    return rsi
+
+
+def query_info_svm(stockname):
+    # get SVM prediction
+    print('get SVM prediction:')
+    svm = SVMpredict(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv')
+    return svm
+
+
+def query_info_bayesian(stockname):
+    # get Bayesian prediction
+    print('get Bayesian prediction:')
+    model = BayesianCurveFitting()
+    data = model.read_csv(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv', y_in_column=4)
+    tmp = model.predict(y_vec=data)
+    bayesian = tmp[0]
+    variance = tmp[1]
+    return bayesian
+
+
+def query_info_moving_avg(stockname, time_type, from_time, to_time):
     # moving average result
     print('get moving average result:')
     pred_price = round(analyzeSymbol(stockname, 5),2)
+    pred_price1 = round(analyzeSymbol(stockname, 50),2)
 
-    # # get Bayesian prediction
-    # print('get Bayesian prediction:')
-    # model = BayesianCurveFitting()
-    # data = model.read_csv(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv', y_in_column=4)
-    # tmp = model.predict(y_vec=data)
-    # returnBayesian = tmp[0]
-    # variance = tmp[1]
-    # print(returnBayesian)
-    #
-    # # get SVM prediction
-    # print('get SVM prediction:')
-    # returnSVM = SVMpredict(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv')
-    # print(returnSVM)
+    query_current_price = """
+        SELECT "4. close"
+        FROM {__stockname__}_{__time_type__}
+        WHERE Date <= {__to_time__}
+        """
 
-    # get RSI results
-    print('get RSI result:')
-    RSI = get_RSI(stockname)
+    q_results = cursor.execute(query_current_price.format(__stockname__=stockname, __time_type__=time_type, __to_time__=to_time))
+    for res in q_results:
+        chart_data = res[0]
+    current_price = chart_data
+    rec_BS_A = ['BUY', 'SELL', 'HOLD']
+    if float(current_price)*(0.99) > pred_price:
+        rec_BS = rec_BS_A[1]
+    elif float(current_price)*(1.01) < pred_price:
+        rec_BS = rec_BS_A[0]
+    else:
+        rec_BS = rec_BS_A[2]
 
+    if float(current_price)*(0.99) > pred_price1:
+        rec_BS1 = rec_BS_A[1]
+    elif float(current_price)*(1.01) < pred_price1:
+        rec_BS1 = rec_BS_A[0]
+    else:
+        rec_BS1 = rec_BS_A[2]
+
+    move_avg_query = """
+        SELECT {__stockname__}_historical.Date, {__stockname__}_historical.`{__value_name__}`, avg(historicaldata_past.`{__value_name__}`) as `{__value_name__}_window`
+        FROM {__stockname__}_historical
+        JOIN (
+            SELECT
+            {__stockname__}_historical.Date, {__stockname__}_historical.`{__value_name__}`
+            FROM {__stockname__}_historical
+        ) AS historicaldata_past 
+          ON {__stockname__}_historical.Date BETWEEN  historicaldata_past.Date and date(historicaldata_past.Date, '+{__window__} days')
+        GROUP BY 1, 2
+        order by {__stockname__}_historical.Date ASC;
+        """
+
+    data_type = '4. Close'
+    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__=data_type, __window__=50))
+    date1 = []
+    moving_avg1 = []
+    for result in q_results:
+        unixtime = result[0]
+        if from_time <= unixtime <= to_time:
+            date1.append(unixtime)
+            moving_avg1.append(result[2])
+
+    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__=data_type, __window__=150))
+    date2 = []
+    moving_avg2 = []
+    for result in q_results:
+        unixtime = result[0]
+        if from_time <= unixtime <= to_time:
+            date1.append(unixtime)
+            moving_avg1.append(result[2])
+
+    print(pred_price, rec_BS, pred_price1, rec_BS1)
+    print(moving_avg1, moving_avg2)
+    print(date1, date2)
+    return pred_price, rec_BS, pred_price1, rec_BS1
+
+
+def query_info_macd(stockname, time_type, from_time, to_time):
     # get MACD results
     print('get MACD result:')
-    MACD = get_MACD(stockname, interval)
-
-    # connect database
-    print('connect sqlite db')
-    conn = sqlite3.connect('StockTracking/backendserver/data/database.db')
-    cursor = conn.cursor()
-
-    rt_price = """
-        SELECT "4. close"
-        FROM AAPL_realtime
-        """
-    cursor.execute('SELECT "4. close" FROM %s_realtime' % stockname)
-
-
-    q_results = cursor.execute(rt_price)
-    for i in q_results:
-        rt_current = i[0]
-
-    # rec_BS_A = ['BUY','SELL','HOLD']
-    # if float(rt_current)*(0.99) > pred_price:
-    #     rec_BS = rec_BS_A[1]
-    # elif float(rt_current)*(1.01) < pred_price:
-    #     rec_BS = rec_BS_A[0]
-    # else:
-    #     rec_BS = rec_BS_A[2]
-
-
-    recent_trend_query = """
-    SELECT date, `{__value_name__}`
-    FROM {__stockname__}_historical
-    order by date ASC;
-    """
-    move_avg_query = """
-    SELECT {__stockname__}_historical.Date, {__stockname__}_historical.`{__value_name__}`, avg(historicaldata_past.`{__value_name__}`) as `{__value_name__}_window`
-    FROM {__stockname__}_historical
-    JOIN (
-        SELECT
-        {__stockname__}_historical.Date, {__stockname__}_historical.`{__value_name__}`
-        FROM {__stockname__}_historical
-    ) AS historicaldata_past 
-      ON {__stockname__}_historical.Date BETWEEN  historicaldata_past.Date and date(historicaldata_past.Date, '+{__window__} days')
-    GROUP BY 1, 2
-    order by {__stockname__}_historical.Date ASC;
-    """
-
-    data_types = [
-        '1. Open',
-        '2. High',
-        '3. Low',
-        '4. Close',
-        '5. Volume',
-    ]
-
-    date_and_moving_avg1_all = {}
-    date_and_moving_avg2_all = {}
-    date_and_trend_all = {}
-    date_and_rsi_all = {}
-
-    # print(move_avg_query.format(__stockname__=stockname, __value_name__='1. Open', __window__=3))
-    i = 0
-    for data_type in data_types:
-        q_results = cursor.execute(recent_trend_query.format(__stockname__=stockname, __value_name__=data_type))
-        recent_trend = []
-        for result in q_results:
-            unixtime = result[0]
-            recent_trend.append([unixtime, result[1]])
-        date_and_trend_all[data_type] = recent_trend
-
-        q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__=data_type, __window__=50))
-        date_and_moving_avg = []
-        for result in q_results:
-            unixtime = result[0]
-            date_and_moving_avg.append([unixtime, result[2]])
-        date_and_moving_avg1_all[data_type] = date_and_moving_avg
-
-        q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__=data_type, __window__=150))
-        date_and_moving_avg = []
-        date_and_rsi = []
-        j = 0
-        for result in q_results:
-            unixtime = result[0]
-            date_and_moving_avg.append([unixtime, result[2]])
-            date_and_rsi.append([unixtime, RSI[i][j]])
-            j += 1
-        date_and_moving_avg2_all[data_type] = date_and_moving_avg
-        date_and_rsi_all[data_type] = date_and_rsi
-        i += 1
-
-        # print(chart_data_all_th)
-        # print(chart_data_all_fth)
-
-    print(date_and_moving_avg1_all)
-    print(date_and_moving_avg2_all)
-    print(date_and_trend_all)
-    print(date_and_rsi_all)
-
+    MACD = get_MACD(stockname, time_type, from_time, to_time)
 
 
 # if __name__ == '__main__':
-function('AAPL', 'daily')
+# function('AAPL', 'daily')
+# print(query_info_rsi('AAPL', 'historical', '2003-01-01', '2004-01-01'))
