@@ -110,19 +110,20 @@ def query_info_neural_network(stockname, time_type, from_time, to_time):
 
 def query_info_moving_avg(stockname, time_type, from_time, to_time):
     move_avg_query = """
-        SELECT {__stockname__}_historical.date, {__stockname__}_historical.`{__value_name__}`, avg(historicaldata_past.`{__value_name__}`) as `{__value_name__}_window`
-        FROM {__stockname__}_historical
+        SELECT {__stockname__}_{__time_type__}.date, {__stockname__}_{__time_type__}.`{__value_name__}`, 
+        avg({__time_type__}data_past.`{__value_name__}`) as `{__value_name__}_window`
+        FROM {__stockname__}_{__time_type__}
         JOIN (
             SELECT
-            {__stockname__}_historical.date, {__stockname__}_historical.`{__value_name__}`
-            FROM {__stockname__}_historical
-        ) AS historicaldata_past 
-          ON {__stockname__}_historical.date BETWEEN  historicaldata_past.date and date(historicaldata_past.date, '+{__window__} days')
+            {__stockname__}_{__time_type__}.date, {__stockname__}_{__time_type__}.`{__value_name__}`
+            FROM {__stockname__}_{__time_type__}
+        ) AS {__time_type__}data_past 
+          ON {__stockname__}_{__time_type__}.date BETWEEN {__time_type__}data_past.date and date({__time_type__}data_past.date, '+{__window__} days')
         GROUP BY 1, 2
-        order by {__stockname__}_historical.date ASC;
+        order by {__stockname__}_{__time_type__}.date ASC;
         """
 
-    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__='4. close', __window__=30))
+    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __time_type__=time_type, __value_name__='4. close', __window__=30))
     date1 = []
     moving_avg1 = []
     for result in q_results:
@@ -131,7 +132,7 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
             date1.append(unixtime)
             moving_avg1.append(result[2])
 
-    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__='4. close', __window__=100))
+    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __time_type__=time_type, __value_name__='4. close', __window__=100))
     date2 = []
     moving_avg2 = []
     for result in q_results:

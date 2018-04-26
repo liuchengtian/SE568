@@ -7,8 +7,9 @@ sqlite_engine = create_engine(
     convert_unicode=True,
     echo=True
 )
-conn = sqlite3.connect('database.db')
-cursor = conn.cursor()
+# conn = sqlite3.connect('StockTracking/database.db')
+# cursor = conn.cursor()
+
 
 def add_favorite(id, ticker):
     create_favorite_db = """
@@ -36,10 +37,15 @@ def read_favorite(id):
     WHERE id = {__id__}
     """
     ticker = []
-    q_results = cursor.execute(read_favorite_stock)
+    q_results = cursor.execute(read_favorite_stock.format(__id__=id))
     for res in q_results:
-        ticker.append(res[0])
+        ticker.append(res[1])
     return ticker
 
+
 if __name__ == '__main__':
-    add_favorite(1, 'AAPL')
+    # conn = sqlite3.connect('../../database.db')
+    # cursor = conn.cursor()
+    # add_favorite(11, 'MSFT')
+    # print(read_favorite(11))
+    pass
