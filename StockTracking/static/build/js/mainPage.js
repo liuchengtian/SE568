@@ -419,8 +419,7 @@ $( document ).ready(function() {
                   type: 'line',
                   smooth: true,
                   itemStyle: {
-                  normal: {
-                  }
+
                   },
                   data: data.prices
                 }, {
@@ -428,8 +427,11 @@ $( document ).ready(function() {
                   type: 'line',
                   smooth: true,
                   itemStyle: {
-                  normal: {
-                  }
+                    emphasis:{
+                      lineStyle:{
+                        type: 'dotted'
+                      }
+                    }
                   },
                   data: data.SMA1
                 }, {
@@ -437,10 +439,180 @@ $( document ).ready(function() {
                   type: 'line',
                   smooth: true,
                   itemStyle: {
-                  normal: {
-                  }
+                    emphasis:{
+                      lineStyle:{
+                        type: 'dashed'
+                      }
+                    }
                   },
                   data: data.SMA2
+                }]
+              });
+            },
+        fail: function(){
+            console.log('query fail.');
+          }
+        });
+  }
+
+ if($('#RSI_chart').length){
+    var urlPrice = "backend/get_rsi";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time':'2003-01-01','to_time':'2004-01-01'};
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
+     $.ajax({type: "post",
+        url: urlPrice,
+        data: input,
+        dataType: 'json',
+        success: function(data){
+            console.log(data)
+            //update echart
+            var echartLine = echarts.init(document.getElementById('RSI_chart'), theme);
+            echartLine.setOption({
+                title: {
+                  text: getUrlParameter('ticker'),
+                  subtext: 'Line Chart'
+                },
+                tooltip: {
+                  trigger: 'axis'
+                },
+                legend: {
+                  x: 220,
+                  y: 40,
+                  data: ['rsi']
+                },
+                toolbox: {
+                  show: true,
+                  feature: {
+                    magicType: {
+                      show: true,
+                      title: {
+                        line: 'Line',
+                        bar: 'Bar',
+                        stack: 'Stack',
+                        tiled: 'Tiled'
+                      },
+                      type: ['line', 'bar', 'stack', 'tiled']
+                    },
+                    restore: {
+                      show: true,
+                      title: "Restore"
+                    },
+                    saveAsImage: {
+                      show: true,
+                      title: "Save Image"
+                    }
+                  }
+                },
+                calculable: true,
+                xAxis: [{
+                  type: 'category',
+                  boundaryGap: false,
+                  data: data.date
+                }],
+                yAxis: [{
+                  type: 'value'
+                }],
+                series: [{
+                  name: 'rsi',
+                  type: 'line',
+                  smooth: true,
+                  itemStyle: {
+
+                  },
+                  data: data.rsi,
+                  markLine: {
+                      data: [
+                          {yAxis: 20},
+                          {yAxis: 80}
+                      ]
+                  }
+                }]
+              });
+            },
+        fail: function(){
+            console.log('query fail.');
+          }
+        });
+  }
+
+   if($('#MACD_chart').length){
+    var urlPrice = "backend/get_macd";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time':'2003-01-01','to_time':'2004-01-01'};
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
+     $.ajax({type: "post",
+        url: urlPrice,
+        data: input,
+        dataType: 'json',
+        success: function(data){
+            console.log(data)
+            //update echart
+            var echartLine = echarts.init(document.getElementById('MACD_chart'), theme);
+            echartLine.setOption({
+                title: {
+                  text: getUrlParameter('ticker'),
+                  subtext: 'Line Chart'
+                },
+                tooltip: {
+                  trigger: 'axis'
+                },
+                legend: {
+                  x: 220,
+                  y: 40,
+                  data: ['MACD','MACD_Signal','MACD_Hist']
+                },
+                toolbox: {
+                  show: true,
+                  feature: {
+                    magicType: {
+                      show: true,
+                      title: {
+                        line: 'Line',
+                        bar: 'Bar',
+                        stack: 'Stack',
+                        tiled: 'Tiled'
+                      },
+                      type: ['line', 'bar', 'stack', 'tiled']
+                    },
+                    restore: {
+                      show: true,
+                      title: "Restore"
+                    },
+                    saveAsImage: {
+                      show: true,
+                      title: "Save Image"
+                    }
+                  }
+                },
+                calculable: true,
+                xAxis: [{
+                  type: 'category',
+                  boundaryGap: false,
+                  data: data.date
+                }],
+                yAxis: [{
+                  type: 'value'
+                }],
+                series: [{
+                  name: 'MACD',
+                  type: 'line',
+                  smooth: true,
+                  data: data.MACD
+                },{
+                  name: 'MACD_Signal',
+                  type: 'line',
+                  smooth: true,
+                  data: data.MACD_Signal
+                },{
+                  name: 'MACD_Hist',
+                  type: 'bar',
+                  smooth: true,
+                  data: data.MACD_Hist
                 }]
               });
             },
