@@ -254,7 +254,8 @@ def get_neural_network():
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
-    prediction1, action1, prediction2, action2 = query_info.query_info_neural_network(ticker, time_type, from_time, to_time)
+    prediction1, action1, prediction2, action2 = \
+        query_info.query_info_neural_network(ticker, time_type, from_time, to_time)
     return jsonify({
         'prediction1': prediction1,
         'action1': action1,
@@ -270,7 +271,7 @@ def get_bayesian():
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
     data = query_info.query_info_bayesian(ticker)
-    return data
+    return jsonify({'bayesian': data})
 
 
 @app.route('/backend/get_svm', methods=['GET', "POST"])
@@ -280,14 +281,16 @@ def get_svm():
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
     data = query_info.query_info_svm(ticker)
-    prediction = data[0].tolist()
-    # return jsonify({
-    #     'day1': prediction[0],
-    #     'day2': prediction[1],
-    #     'day3': prediction[2],
-    #     'day4': prediction[3],
-    #     'day5': prediction[4],
-    # })
+    days = data[0].tolist()
+    prediction = data[1].tolist()
+    return jsonify({
+        'day1': prediction[0],
+        'day2': prediction[1],
+        'day3': prediction[2],
+        'day4': prediction[3],
+        'day5': prediction[4],
+    })
+
 
 @app.route('/backend/get_yearRange', methods=['GET', 'POST'])
 def get_yearRange():
