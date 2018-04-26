@@ -39,7 +39,7 @@ def query_info_close(stockname, time_type, from_time, to_time):
     query_close = """
         SELECT `4. close`
         FROM {__stockname__}_{__time_type__}
-        WHERE date >= {__from_time__} and date <= {__to_time__}
+        WHERE date >= '{__from_time__}' and date <= '{__to_time__}'
         order by date ASC;
         """
     q_results = cursor.execute(query_close.format(__stockname__=stockname, __time_type__=time_type,
@@ -84,7 +84,7 @@ def query_info_neural_network(stockname, time_type, from_time, to_time):
     query_current_price = """
         SELECT "4. close"
         FROM {__stockname__}_{__time_type__}
-        WHERE Date <= {__to_time__}
+        WHERE Date <= '{__to_time__}'
         """
 
     q_results = cursor.execute(query_current_price.format(__stockname__=stockname, __time_type__=time_type, __to_time__=to_time))
@@ -114,7 +114,7 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
         FROM {__stockname__}_historical
         JOIN (
             SELECT
-            {__stockname__}_historical.Date, {__stockname__}_historical.`{__value_name__}`
+            {__stockname__}_historical.date, {__stockname__}_historical.`{__value_name__}`
             FROM {__stockname__}_historical
         ) AS historicaldata_past 
           ON {__stockname__}_historical.date BETWEEN  historicaldata_past.date and date(historicaldata_past.date, '+{__window__} days')
@@ -137,8 +137,8 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
     for result in q_results:
         unixtime = result[0]
         if from_time <= unixtime <= to_time:
-            date1.append(unixtime)
-            moving_avg1.append(result[2])
+            date2.append(unixtime)
+            moving_avg2.append(result[2])
     data = {'SMA1': moving_avg1,
             'date1': date1,
             'SMA2': moving_avg2,
