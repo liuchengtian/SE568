@@ -7,8 +7,8 @@ sqlite_engine = create_engine(
     convert_unicode=True,
     echo=True
 )
-# conn = sqlite3.connect('StockTracking/database.db')
-# cursor = conn.cursor()
+conn = sqlite3.connect('StockTracking/database.db')
+cursor = conn.cursor()
 
 
 def add_favorite(id, ticker):

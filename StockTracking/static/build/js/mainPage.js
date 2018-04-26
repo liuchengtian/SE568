@@ -633,7 +633,9 @@ function initial_kpi(){
 function initial_user_fav(){
   if($('#fav_stocks').length){
     var urlPrice = "backend/get_favorite_stock_prices";
-    var input = {'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+    var from_time = '2000-01-01';
+    var to_time = '2020-01-01';
+    var input = {'time_type': 'realtime', 'from_time':from_time,'to_time': to_time};
     console.log(input);
     if (input === undefined){
     var input = {'ticker': 'AMZN'};
@@ -753,6 +755,8 @@ $( document ).ready(function() {
   }
   //initial kpi
   initial_kpi();
+  //update user info
+  initial_user_fav();
   if($('#stockNews').length){
     //updata News
     var url = "backend/get_news";

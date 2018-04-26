@@ -3,7 +3,20 @@ import mysql.connector  # using mysql connector should install it first(python 2
 import pandas as pd
 from sqlalchemy.types import VARCHAR, DateTime
 import time
-from ..config import *
+# from StockTracking.backendserver.config import *
+from sqlalchemy import create_engine
+from alpha_vantage.timeseries import TimeSeries
+from alpha_vantage.techindicators import TechIndicators
+####################################################
+# global variables definition
+User = 'root'
+PassWord = 'password'
+Host = '127.0.0.1'
+Port = '3306'
+Database = 'SEProject'
+api_key = 'EQ6GGWD5D4ME4283'
+
+
 
 # define database engines
 sqlite_engine = create_engine(
@@ -11,9 +24,18 @@ sqlite_engine = create_engine(
     convert_unicode=True,
     echo=True
 )
-MYSQL_engine = create_engine(
-    'mysql+mysqlconnector://' + User + ':' + PassWord +
-    '@' + Host + ':' + Port + '/' + Database, echo=False)
+# MYSQL_engine = create_engine(
+#     'mysql+mysqlconnector://' + User + ':' + PassWord +
+#     '@' + Host + ':' + Port + '/' + Database, echo=False)
+# get TimeSeries/TechIndicator object of Alpha Vantage API
+ts = TimeSeries(key=api_key, output_format='pandas', retries=20)
+ti = TechIndicators(key=api_key, output_format='pandas', retries=20)
+
+# using alpha vantage finance api to save data into a pandas dataframe
+stocks = ['AAPL', 'GOOGL', 'NVDA', 'AABA', 'AMZN', 'MSFT', 'BAC', 'NKE', 'NFLX', 'FB']
+
+
+
 
 
 def init_db():
@@ -129,7 +151,7 @@ def get_hist_data(stock):
 
 
 def main():
-    init_db()
+    # init_db()
     create_db(stock=stocks, engine=sqlite_engine, realtime_loading=True)
 
 

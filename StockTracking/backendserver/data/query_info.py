@@ -15,7 +15,7 @@ import datetime
 
 # connect database
 print('connect sqlite db')
-conn = sqlite3.connect('StockTracking/backendserver/data/database.db')
+conn = sqlite3.connect('StockTracking/backendserver/data/database_stock.db')
 cursor = conn.cursor()
 
 
@@ -200,4 +200,4 @@ def query_info_lowest(stockname):
 # if __name__ == '__main__':
 # function('AAPL', 'daily')
 # print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
-print(query_info_lowest('AAPL'))
+# print(query_info_lowest('AAPL'))
