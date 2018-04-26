@@ -3,7 +3,17 @@ import mysql.connector  # using mysql connector should install it first(python 2
 import pandas as pd
 from sqlalchemy.types import VARCHAR, DateTime
 import time
-from StockTracking.backendserver.config import *
+from ..config import *
+
+# define database engines
+sqlite_engine = create_engine(
+    'sqlite:///database.db',
+    convert_unicode=True,
+    echo=True
+)
+MYSQL_engine = create_engine(
+    'mysql+mysqlconnector://' + User + ':' + PassWord +
+    '@' + Host + ':' + Port + '/' + Database, echo=False)
 
 
 def init_db():
