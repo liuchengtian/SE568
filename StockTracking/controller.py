@@ -159,7 +159,10 @@ def user(ticker_id):
 
 @app.route('/user', methods=['GET', 'POST'])
 def mainPage():
-    return render_template('userPage.html')
+    if current_user.is_authenticated:
+        return render_template('userPage.html')
+    else:
+        return render_template('login.html')
 
 
 @app.route('/stocks', methods=['GET', 'POST'])
@@ -340,7 +343,28 @@ def get_favorite():
     else:
         print("in none")
         return None
-    favorite.read_favorite(userInfo['id'])
+    return favorite.read_favorite(userInfo['id'])
+
+
+@app.route('/backend/get_favorite_stock_prices', methods=['GET', 'POST'])
+def get_favorite_stock_prices():
+    time_type = request.form.get('time_type')
+    from_time = request.form.get('from_time')
+    to_time = request.form.get('to_time')
+    if current_user.is_authenticated:
+        result = dict()
+        result['data'] = []
+        result['name'] = []
+        stocks = get_favorite()
+        dataItem = dict()
+        for item in stocks:
+            dataItem['data'] = query_info.query_info_close(item, time_type, from_time, to_time)
+            result['data'].append(dataItem)
+            result['name'].append(item)
+        return jsonify(result)
+    else:
+        print("in none")
+        return None
     return True
 
 

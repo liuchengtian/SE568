@@ -476,87 +476,86 @@ function update_rsi(){
 //update macd chart 
 function update_macd(){
   var urlPrice = "backend/get_macd";
-
-    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
-    console.log(input);
-    if (input === undefined){
-        var input = {'ticker': 'AMZN'};
-    }
-     $.ajax({type: "post",
-        url: urlPrice,
-        data: input,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            //update echart
-            var echartLine = echarts.init(document.getElementById('MACD_chart'), theme);
-            echartLine.setOption({
-                title: {
-                  text: getUrlParameter('ticker'),
-                  subtext: 'Line Chart'
-                },
-                tooltip: {
-                  trigger: 'axis'
-                },
-                legend: {
-                  x: 220,
-                  y: 40,
-                  data: ['MACD','MACD_Signal','MACD_Hist']
-                },
-                toolbox: {
-                  show: true,
-                  feature: {
-                    magicType: {
-                      show: true,
-                      title: {
-                        line: 'Line',
-                        bar: 'Bar',
-                        stack: 'Stack',
-                        tiled: 'Tiled'
-                      },
-                      type: ['line', 'bar', 'stack', 'tiled']
+  var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+  console.log(input);
+  if (input === undefined){
+      var input = {'ticker': 'AMZN'};
+  }
+   $.ajax({type: "post",
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          //update echart
+          var echartLine = echarts.init(document.getElementById('MACD_chart'), theme);
+          echartLine.setOption({
+              title: {
+                text: getUrlParameter('ticker'),
+                subtext: 'Line Chart'
+              },
+              tooltip: {
+                trigger: 'axis'
+              },
+              legend: {
+                x: 220,
+                y: 40,
+                data: ['MACD','MACD_Signal','MACD_Hist']
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  magicType: {
+                    show: true,
+                    title: {
+                      line: 'Line',
+                      bar: 'Bar',
+                      stack: 'Stack',
+                      tiled: 'Tiled'
                     },
-                    restore: {
-                      show: true,
-                      title: "Restore"
-                    },
-                    saveAsImage: {
-                      show: true,
-                      title: "Save Image"
-                    }
+                    type: ['line', 'bar', 'stack', 'tiled']
+                  },
+                  restore: {
+                    show: true,
+                    title: "Restore"
+                  },
+                  saveAsImage: {
+                    show: true,
+                    title: "Save Image"
                   }
-                },
-                calculable: true,
-                xAxis: [{
-                  type: 'category',
-                  boundaryGap: false,
-                  data: data.date
-                }],
-                yAxis: [{
-                  type: 'value'
-                }],
-                series: [{
-                  name: 'MACD',
-                  type: 'line',
-                  smooth: true,
-                  data: data.MACD
-                },{
-                  name: 'MACD_Signal',
-                  type: 'line',
-                  smooth: true,
-                  data: data.MACD_Signal
-                },{
-                  name: 'MACD_Hist',
-                  type: 'bar',
-                  smooth: true,
-                  data: data.MACD_Hist
-                }]
-              });
-            },
-        fail: function(){
-            console.log('query fail.');
-          }
-        });
+                }
+              },
+              calculable: true,
+              xAxis: [{
+                type: 'category',
+                boundaryGap: false,
+                data: data.date
+              }],
+              yAxis: [{
+                type: 'value'
+              }],
+              series: [{
+                name: 'MACD',
+                type: 'line',
+                smooth: true,
+                data: data.MACD
+              },{
+                name: 'MACD_Signal',
+                type: 'line',
+                smooth: true,
+                data: data.MACD_Signal
+              },{
+                name: 'MACD_Hist',
+                type: 'bar',
+                smooth: true,
+                data: data.MACD_Hist
+              }]
+            });
+          },
+      fail: function(){
+          console.log('query fail.');
+        }
+      });
 }
 
 //initial set click on
@@ -631,6 +630,86 @@ function initial_kpi(){
     
 }
 
+function initial_user_fav(){
+  if($('#fav_stocks').length){
+    var urlPrice = "backend/get_favorite_stock_prices";
+    var input = {'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+    console.log(input);
+    if (input === undefined){
+    var input = {'ticker': 'AMZN'};
+    }
+    $.ajax({type: "post",
+    url: urlPrice,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        var echartLine = echarts.init(document.getElementById('fav_stocks'), theme);
+        //initial series
+        var seriesData = []
+        $.each(data.data,function(i,item){
+          seriesItem = {
+            name: data.name[i],
+            type: 'line',
+            smooth: true,
+            data: item
+          };
+          seriesData.push(seriesItem);
+        });
+        echartLine.setOption({
+          title: {
+            text: 'favorite stocks',
+            subtext: 'Line Chart'
+          },
+          tooltip: {
+            trigger: 'axis'
+          },
+          legend: {
+            x: 220,
+            y: 40,
+            data: data.name
+          },
+          toolbox: {
+            show: true,
+            feature: {
+              magicType: {
+                show: true,
+                title: {
+                  line: 'Line',
+                  bar: 'Bar',
+                  stack: 'Stack',
+                  tiled: 'Tiled'
+                },
+                type: ['line', 'bar', 'stack', 'tiled']
+              },
+              restore: {
+                show: true,
+                title: "Restore"
+              },
+              saveAsImage: {
+                show: true,
+                title: "Save Image"
+              }
+            }
+          },
+          calculable: true,
+          xAxis: [{
+            type: 'category',
+            boundaryGap: false,
+            data: data.date
+          }],
+          yAxis: [{
+            type: 'value'
+          }],
+          series: seriesData
+        });
+        },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                }
+    });
+  }
+}
 
 //initial table and charts
 
@@ -672,7 +751,7 @@ $( document ).ready(function() {
                 }
               });
   }
-
+  //initial kpi
   initial_kpi();
   if($('#stockNews').length){
     //updata News
@@ -710,18 +789,16 @@ $( document ).ready(function() {
           }
         }); 
   }
+  //initial prediciton charts
   if($('#SMA_chart').length){
     update_sma();
   }
-
   if($('#RSI_chart').length){
     update_rsi();
   }
-
   if($('#MACD_chart').length){
     update_macd();
   }
-
   if($('#reservation').length){
     var urlRange = 'backend/get_yearRange';
     var input = {'ticker': getUrlParameter('ticker')};
