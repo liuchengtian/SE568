@@ -356,11 +356,17 @@ def get_favorite_stock_prices():
         result['data'] = []
         result['name'] = []
         stocks = get_favorite()
-        dataItem = dict()
+        min_set = []
         for item in stocks:
-            dataItem['data'] = query_info.query_info_close(item, time_type, from_time, to_time)
-            result['data'].append(dataItem)
+            data_set = dict()
+            print(item)
+            result['date'] = query_info.query_info_date(item, time_type, from_time, to_time)
+            data_set['data'] = query_info.query_info_close(item, time_type, from_time, to_time)
+            print(data_set['data'])
+            min_set.append(min(data_set['data']))
+            result['data'].append(data_set)
             result['name'].append(item)
+        result['min'] = min(min_set)
         return jsonify(result)
     else:
         print("in none")

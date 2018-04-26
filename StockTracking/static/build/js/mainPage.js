@@ -650,14 +650,15 @@ function initial_user_fav(){
         //initial series
         var seriesData = []
         $.each(data.data,function(i,item){
-          seriesItem = {
+          var seriesItem = {
             name: data.name[i],
             type: 'line',
             smooth: true,
-            data: item
+            data: item.data
           };
           seriesData.push(seriesItem);
         });
+        console.log(seriesData);
         echartLine.setOption({
           title: {
             text: 'favorite stocks',
@@ -701,7 +702,8 @@ function initial_user_fav(){
             data: data.date
           }],
           yAxis: [{
-            type: 'value'
+            type: 'value',
+            min: data.min
           }],
           series: seriesData
         });
