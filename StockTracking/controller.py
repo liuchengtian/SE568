@@ -231,6 +231,10 @@ def get_moving_avg():
     SMA = query_info.query_info_moving_avg(ticker, time_type, from_time, to_time)
     prices = query_info.query_info_close(ticker, time_type, from_time, to_time)
     date = query_info.query_info_date(ticker, time_type, from_time, to_time)
+    print((SMA['SMA1']))
+    print((SMA['SMA2']))
+    print(len(date))
+    print(len(prices))
     assert len(SMA['date1']) == len(SMA['date2']) == len(date) == len(prices)
     data = {
         'prices': prices,
