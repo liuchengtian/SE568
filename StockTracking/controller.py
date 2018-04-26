@@ -142,9 +142,14 @@ def get_rsi():
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
-    interval = 'daily'
-    query_info.query_info_rsi(ticker, time_type, from_time, to_time)
-    return
+    data = query_info.query_info_rsi(ticker, time_type, from_time, to_time)
+    date = query_info.query_info_date(from_time, to_time)
+    assert(len(data) == len(date))
+    result = {
+        'rsi': data,
+        'date': date
+    }
+    return jsonify(result)
 
 
 @app.route('/backend/get_macd', methods=['GET', "POST"])
@@ -153,4 +158,55 @@ def get_macd():
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
+    data = query_info.query_info_macd(ticker, time_type, from_time, to_time)
+    MACD_Hist = data['MACD_Hist']
+    MACD = data['MACD']
+    MACD_Signal = data['MACD_Signal']
+    date = query_info.query_info_date(from_time, to_time)
+    assert(len(data) == len(date))
+    result = {
+        'MACD': MACD,
+        'MACD_Signal': MACD_Signal,
+        'MACD_Hist': MACD_Hist,
+        'date': date
+    }
+
+
+@app.route('/backend/get_moving_avg', methods=['GET', "POST"])
+def get_moving_avg():
+    ticker = request.form.get('ticker')
+    time_type = request.form.get('time_type')
+    from_time = request.form.get('from_time')
+    to_time = request.form.get('to_time')
+    data = query_info.query_info_moving_avg(ticker, time_type, from_time, to_time)
+    return jsonify(data)
+
+
+@app.route('/backend/get_neural_network', methods=['GET', "POST"])
+def get_neural_network():
+    ticker = request.form.get('ticker')
+    time_type = request.form.get('time_type')
+    from_time = request.form.get('from_time')
+    to_time = request.form.get('to_time')
+    data = query_info.query_info_neural_network(ticker, time_type, from_time, to_time)
+
+
+@app.route('/backend/get_bayesian', methods=['GET', "POST"])
+def get_bayesian():
+    ticker = request.form.get('ticker')
+    time_type = request.form.get('time_type')
+    from_time = request.form.get('from_time')
+    to_time = request.form.get('to_time')
+    data = query_info.query_info_bayesian(ticker)
+    return data
+
+
+@app.route('/backend/get_svm', methods=['GET', "POST"])
+def get_bayesian():
+    ticker = request.form.get('ticker')
+    time_type = request.form.get('time_type')
+    from_time = request.form.get('from_time')
+    to_time = request.form.get('to_time')
+    data = query_info.query_info_svm(ticker)
+    return data
 

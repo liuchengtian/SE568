@@ -18,14 +18,6 @@ print('connect sqlite db')
 conn = sqlite3.connect('StockTracking/backendserver/data/database.db')
 cursor = conn.cursor()
 
-data_types = [
-    '1. Open',
-    '2. High',
-    '3. Low',
-    '4. Close',
-    '5. Volume',
-]
-
 
 def query_info_date(stockname, time_type, from_time, to_time):
     query_date = """
@@ -43,6 +35,7 @@ def query_info_rsi(stockname, time_type, from_time, to_time):
     # get RSI results
     print('get RSI result:')
     rsi = get_RSI(stockname, time_type, from_time, to_time)
+    # returns a list of rsi
     return rsi
 
 
@@ -64,7 +57,7 @@ def query_info_bayesian(stockname):
     return bayesian
 
 
-def query_info_moving_avg(stockname, time_type, from_time, to_time):
+def query_info_neural_network(stockname, time_type, from_time, to_time):
     # moving average result
     print('get moving average result:')
     pred_price = round(analyzeSymbol(stockname, 5),2)
@@ -94,22 +87,23 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
         rec_BS1 = rec_BS_A[0]
     else:
         rec_BS1 = rec_BS_A[2]
+    return pred_price, rec_BS, pred_price1, rec_BS1
 
+def query_info_moving_avg(stockname, time_type, from_time, to_time):
     move_avg_query = """
-        SELECT {__stockname__}_historical.Date, {__stockname__}_historical.`{__value_name__}`, avg(historicaldata_past.`{__value_name__}`) as `{__value_name__}_window`
+        SELECT {__stockname__}_historical.date, {__stockname__}_historical.`{__value_name__}`, avg(historicaldata_past.`{__value_name__}`) as `{__value_name__}_window`
         FROM {__stockname__}_historical
         JOIN (
             SELECT
             {__stockname__}_historical.Date, {__stockname__}_historical.`{__value_name__}`
             FROM {__stockname__}_historical
         ) AS historicaldata_past 
-          ON {__stockname__}_historical.Date BETWEEN  historicaldata_past.Date and date(historicaldata_past.Date, '+{__window__} days')
+          ON {__stockname__}_historical.date BETWEEN  historicaldata_past.date and date(historicaldata_past.date, '+{__window__} days')
         GROUP BY 1, 2
-        order by {__stockname__}_historical.Date ASC;
+        order by {__stockname__}_historical.date ASC;
         """
 
-    data_type = '4. Close'
-    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__=data_type, __window__=50))
+    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__='4. close', __window__=30))
     date1 = []
     moving_avg1 = []
     for result in q_results:
@@ -118,7 +112,7 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
             date1.append(unixtime)
             moving_avg1.append(result[2])
 
-    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__=data_type, __window__=150))
+    q_results = cursor.execute(move_avg_query.format(__stockname__=stockname, __value_name__='4. close', __window__=100))
     date2 = []
     moving_avg2 = []
     for result in q_results:
@@ -126,19 +120,21 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
         if from_time <= unixtime <= to_time:
             date1.append(unixtime)
             moving_avg1.append(result[2])
-
-    print(pred_price, rec_BS, pred_price1, rec_BS1)
-    print(moving_avg1, moving_avg2)
-    print(date1, date2)
-    return pred_price, rec_BS, pred_price1, rec_BS1
+    data = {'moving_avg1': moving_avg1,
+            'date1': date1,
+            'moving_avg2': moving_avg2,
+            'data2': date2}
+    return data
 
 
 def query_info_macd(stockname, time_type, from_time, to_time):
     # get MACD results
     print('get MACD result:')
     MACD = get_MACD(stockname, time_type, from_time, to_time)
+    # pandas
+    return MACD
 
 
 # if __name__ == '__main__':
 # function('AAPL', 'daily')
-# print(query_info_rsi('AAPL', 'historical', '2003-01-01', '2004-01-01'))
+# print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
