@@ -178,7 +178,16 @@ def get_moving_avg():
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
-    data = query_info.query_info_moving_avg(ticker, time_type, from_time, to_time)
+    SMA = query_info.query_info_moving_avg(ticker, time_type, from_time, to_time)
+    prices = query_info.query_info_close(ticker, time_type, from_time, to_time)
+    date = query_info.query_info_date(ticker, time_type, from_time, to_time)
+    assert len(SMA['date1']) == len(SMA['date2']) == len(date) == len(prices)
+    data = {
+        'prices': prices,
+        'SMA1': SMA['SMA1'],
+        'SMA2': SMA['SMA2'],
+        'date': date
+    }
     return jsonify(data)
 
 
@@ -202,7 +211,7 @@ def get_bayesian():
 
 
 @app.route('/backend/get_svm', methods=['GET', "POST"])
-def get_bayesian():
+def get_svm():
     ticker = request.form.get('ticker')
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')

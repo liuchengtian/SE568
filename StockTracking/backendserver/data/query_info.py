@@ -23,12 +23,30 @@ def query_info_date(stockname, time_type, from_time, to_time):
     query_date = """
         SELECT date
         FROM {__stockname__}_{__time_type__}
+        WHERE date >= '{__from_time__}' and date <= '{__to_time__}'
+        order by date ASC;
+        """
+    date = []
+    q_results = cursor.execute(query_date.format(__stockname__=stockname, __time_type__=time_type,
+                                            __from_time__=from_time, __to_time__=to_time))
+    for res in q_results:
+        date.append(res[0])
+    return date
+
+
+def query_info_close(stockname, time_type, from_time, to_time):
+    close = []
+    query_close = """
+        SELECT `4. close`
+        FROM {__stockname__}_{__time_type__}
         WHERE date >= {__from_time__} and date <= {__to_time__}
         order by date ASC;
         """
-    date = cursor.execute(query_date.format(__stockname__=stockname, __time_type__=time_type,
+    q_results = cursor.execute(query_close.format(__stockname__=stockname, __time_type__=time_type,
                                             __from_time__=from_time, __to_time__=to_time))
-    return date
+    for res in q_results:
+        close.append(res[0])
+    return close
 
 
 def query_info_rsi(stockname, time_type, from_time, to_time):
@@ -89,6 +107,7 @@ def query_info_neural_network(stockname, time_type, from_time, to_time):
         rec_BS1 = rec_BS_A[2]
     return pred_price, rec_BS, pred_price1, rec_BS1
 
+
 def query_info_moving_avg(stockname, time_type, from_time, to_time):
     move_avg_query = """
         SELECT {__stockname__}_historical.date, {__stockname__}_historical.`{__value_name__}`, avg(historicaldata_past.`{__value_name__}`) as `{__value_name__}_window`
@@ -120,9 +139,9 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
         if from_time <= unixtime <= to_time:
             date1.append(unixtime)
             moving_avg1.append(result[2])
-    data = {'moving_avg1': moving_avg1,
+    data = {'SMA1': moving_avg1,
             'date1': date1,
-            'moving_avg2': moving_avg2,
+            'SMA2': moving_avg2,
             'data2': date2}
     return data
 
@@ -137,4 +156,4 @@ def query_info_macd(stockname, time_type, from_time, to_time):
 
 # if __name__ == '__main__':
 # function('AAPL', 'daily')
-# print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
+# print(query_info_date('AAPL', 'historical', '2003-01-01', '2004-01-01'))
