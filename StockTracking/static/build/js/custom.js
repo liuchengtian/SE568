@@ -1503,43 +1503,6 @@ if (typeof NProgress != 'undefined') {
 			
 			if( typeof ($.fn.ionRangeSlider) === 'undefined'){ return; }
 			console.log('init_IonRangeSlider');
-
-			var urlSales = "backend/get_timeRange";
-			var input = {ticker: "AMZN"};
-			//initial 
-			$.ajax({type: "post",
-			        url: urlSales,
-			        data: input,
-			        dataType: 'json',
-			        success: function(data){
-			            console.log('in setting echarts line range');
-			            //update echart
-			            $('#rangeLine').ionRangeSlider({
-						  type: "double",
-						  min: data.min,
-						  max: data.max,
-						  grid: true,
-						  force_edges: true
-						});
-						$('#rangeLine2').ionRangeSlider({
-						  type: "double",
-						  min: data.min,
-						  max: data.max,
-						  grid: true,
-						  force_edges: true
-						});
-						$('#rangePie').ionRangeSlider({
-						  type: "double",
-						  min: data.min,
-						  max: data.max,
-						  grid: true,
-						  force_edges: true
-						});
-			        },
-			        error: function(XMLHttpRequest, textStatus, errorThrown) { 
-			              alert("Status: " + textStatus + "Error: " + errorThrown); 
-			          }
-			        });
 			
 			$("#range_27").ionRangeSlider({
 			  type: "double",
@@ -1807,7 +1770,6 @@ if (typeof NProgress != 'undefined') {
 
 			$('#reservation-time').daterangepicker({
 			  timePicker: true,
-			  timePickerIncrement: 30,
 			  locale: {
 				format: 'MM/DD/YYYY h:mm A'
 			  }

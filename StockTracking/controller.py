@@ -157,9 +157,9 @@ def user(ticker_id):
     return redirect(url_for('start'))
 
 
-# @app.route('/user', methods=['GET', 'POST'])
-# def mainPage():
-#     return render_template('userPage.html')
+@app.route('/user', methods=['GET', 'POST'])
+def mainPage():
+    return render_template('userPage.html')
 
 
 @app.route('/stocks', methods=['GET', 'POST'])
@@ -209,9 +209,9 @@ def get_macd():
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
     data = query_info.query_info_macd(ticker, time_type, from_time, to_time)
-    MACD_Hist = data['MACD_Hist']
-    MACD = data['MACD']
-    MACD_Signal = data['MACD_Signal']
+    MACD_Hist = data['MACD_Hist'].tolist()
+    MACD = data['MACD'].tolist()
+    MACD_Signal = data['MACD_Signal'].tolist()
     date = query_info.query_info_date(ticker, time_type, from_time, to_time)
     assert(len(data['MACD_Hist']) == len(date))
     result = {
@@ -220,7 +220,7 @@ def get_macd():
         'MACD_Hist': MACD_Hist,
         'date': date
     }
-    return result
+    return jsonify(result)
 
 @app.route('/backend/get_moving_avg', methods=['GET', "POST"])
 def get_moving_avg():

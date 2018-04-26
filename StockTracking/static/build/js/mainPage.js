@@ -217,6 +217,26 @@ var option2 = {
                 }
             };
 var stocksData;
+var dateRange = {
+  from_time : "2015-01-02",
+  to_time : "2016-02-02"
+}
+
+function date_format(date){
+  dateSet = date.split('/');
+  result = dateSet[2] + '-' + dateSet[0] + '-'+ dateSet[1];
+  return result;
+}
+
+function get_date(date_str){
+  date_item = date_str.split(' - ');
+  result = {};
+  result['from_time'] = date_format(date_item[0]);
+  result['to_time'] = date_format(date_item[1]);
+  return result;
+}
+
+
 
 function checkBoxClick(){
   var checkedBound = [];
@@ -267,96 +287,10 @@ function checkBoxClick(){
   $('#stocksTable').DataTable();
 }
 
-
-//initial set click on
-$("#subStockName").click(function(){
-  var stockName = $('#stockName').val();
-  //alert(stockName);
-  window.location.href = 'stock?ticker='+stockName;
-  window.event.returnValue=false;
-});
-
-
-//initial table and charts
-
-
-$( document ).ready(function() {
-	console.log( "ready!" );
-  //update UserID
-  if($('#userID').length){
-    var input = {'user': 123};
-    var urlGetUser = 'backend/get_userId';
-    $.ajax({type: "post",
-    url: urlGetUser,
-    data: input,
-    dataType: 'json',
-    success: function(data){
-        console.log(data)
-        $('#userID').html(data.name);
-        $('#signUp').html('Logout');
-        $('#signUp').attr("href","logout");
-        $('#sign')
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
-                }
-              });
-  }
-  if($('#userName').length){
-    var urlGetUser = 'backend/get_userId';
-    $.ajax({type: "post",
-    url: urlGetUser,
-    data: input,
-    dataType: 'json',
-    success: function(data){
-        console.log(data)
-        $('#userName').html(data.name);
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
-                    $('#leftSideMenu').empty();
-                }
-              });
-  }
-  if($('#stockNews').length){
-    //updata News
-    var url = "backend/get_news";
-    var input = {'ticker': getUrlParameter('ticker')};
-    console.log(input);
-    $('#stockNewsID').html(getUrlParameter('ticker'));
-    if (input === undefined){
-        var input = {'ticker': "AMZN"};
-    }
-    $.ajax({type: "post",
-        url: url,
-        data: input,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            $.each(data.article, function(i, item) {
-                $('#stockNews').append(
-                    $('<li>').append(
-                        $('<div>').attr('class','block').append(
-                            $('<div>').attr('class','block_content').append(
-                                $('<h2>').attr('class','title').append(
-                                    $('<a>').append(item.title)
-                                ),
-                                $('<div>').attr('class','byline').append(item.date),
-                                $('<p>').attr('class','excerpt').append(item.summary)
-                            )
-                        )
-                    )
-                );
-            });
-        },
-    fail: function(){
-            console.log('query fail.');
-          }
-        }); 
-  }
-  if($('#SMA_chart').length){
-    var urlPrice = "backend/get_moving_avg";
-    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time':'2003-01-01','to_time':'2004-01-01'};
+//update sma charts
+function update_sma(){
+  var urlPrice = "backend/get_moving_avg";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
     console.log(input);
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
@@ -453,11 +387,12 @@ $( document ).ready(function() {
             console.log('query fail.');
           }
         });
-  }
+}
 
- if($('#RSI_chart').length){
-    var urlPrice = "backend/get_rsi";
-    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time':'2003-01-01','to_time':'2004-01-01'};
+//update rsi
+function update_rsi(){
+  var urlPrice = "backend/get_rsi";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
     console.log(input);
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
@@ -536,11 +471,13 @@ $( document ).ready(function() {
             console.log('query fail.');
           }
         });
-  }
+}
 
-   if($('#MACD_chart').length){
-    var urlPrice = "backend/get_macd";
-    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time':'2003-01-01','to_time':'2004-01-01'};
+//update macd chart 
+function update_macd(){
+  var urlPrice = "backend/get_macd";
+
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
     console.log(input);
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
@@ -620,9 +557,106 @@ $( document ).ready(function() {
             console.log('query fail.');
           }
         });
+}
+
+//initial set click on
+$("#subStockName").click(function(){
+  var stockName = $('#stockName').val();
+  //alert(stockName);
+  window.location.href = 'stock?ticker='+stockName;
+  window.event.returnValue=false;
+});
+
+
+//initial table and charts
+
+
+$( document ).ready(function() {
+	console.log( "ready!" );
+  //update UserID
+  if($('#userID').length){
+    var input = {'user': 123};
+    var urlGetUser = 'backend/get_userId';
+    $.ajax({type: "post",
+    url: urlGetUser,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        $('#userID').html(data.name);
+        $('#signUp').html('Logout');
+        $('#signUp').attr("href","logout");
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                }
+              });
+  }
+  if($('#userName').length){
+    var urlGetUser = 'backend/get_userId';
+    $.ajax({type: "post",
+    url: urlGetUser,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        $('#userName').html(data.name);
+    },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                    $('#leftSideMenu').empty();
+                }
+              });
+  }
+  if($('#stockNews').length){
+    //updata News
+    var url = "backend/get_news";
+    var input = {'ticker': getUrlParameter('ticker')};
+    console.log(input);
+    $('#stockNewsID').html(getUrlParameter('ticker'));
+    if (input === undefined){
+        var input = {'ticker': "AMZN"};
+    }
+    $.ajax({type: "post",
+        url: url,
+        data: input,
+        dataType: 'json',
+        success: function(data){
+            console.log(data)
+            $.each(data.article, function(i, item) {
+                $('#stockNews').append(
+                    $('<li>').append(
+                        $('<div>').attr('class','block').append(
+                            $('<div>').attr('class','block_content').append(
+                                $('<h2>').attr('class','title').append(
+                                    $('<a>').append(item.title)
+                                ),
+                                $('<div>').attr('class','byline').append(item.date),
+                                $('<p>').attr('class','excerpt').append(item.summary)
+                            )
+                        )
+                    )
+                );
+            });
+        },
+    fail: function(){
+            console.log('query fail.');
+          }
+        }); 
+  }
+  if($('#SMA_chart').length){
+    update_sma();
   }
 
-  if($('#rangeYear').length){
+  if($('#RSI_chart').length){
+    update_rsi();
+  }
+
+  if($('#MACD_chart').length){
+    update_macd();
+  }
+
+  if($('#reservation').length){
     var urlRange = 'backend/get_yearRange';
     var input = {'ticker': getUrlParameter('ticker')};
     $.ajax({type: "post",
@@ -632,21 +666,26 @@ $( document ).ready(function() {
               success: function(data){
                   console.log('in setting echarts line range');
                   //update echart
-                  $('#rangeYear').ionRangeSlider({
-                    type: "double",
-                    min: '12/31/2015',
-                    max: '12/31/2015',
-                    grid: true,
-                    force_edges: true
+                  dateRange.from_time = data.min;
+                  dateRange.to_time = data.maz;
+                  $('#reservation').val(data.min+' - '+ data.max);
+                  //alert($('#reservation').val());
+                  $('#reservation').on('apply.daterangepicker', function(ev, picker) {
+                    dateRange.from_time = picker.startDate.format('YYYY-MM-DD'); 
+                    dateRange.to_time = picker.endDate.format('YYYY-MM-DD');
+                    console.log(dateRange);
+                    update_sma();
+                    update_rsi();
+                    update_macd();
                   });
-              },
+                },
               error: function(XMLHttpRequest, textStatus, errorThrown) { 
                     alert("Status: " + textStatus + "Error: " + errorThrown); 
                 }
               });
   }
 
-  if($('#echart_line').length){
+  if($('#stockTableID').length){
     //get data
     var urlPrice = "backend/get_price";
     var input = {'ticker': getUrlParameter('ticker')};
@@ -660,56 +699,6 @@ $( document ).ready(function() {
         dataType: 'json',
         success: function(data){
             console.log(data)
-            //update echart
-            var echartLine = echarts.init(document.getElementById('echart_line'), theme);
-            echartLine.setOption({
-                title: {
-                  text: getUrlParameter('ticker'),
-                  subtext: 'Line Chart'
-                },
-                tooltip: {
-                  trigger: 'axis'
-                },
-                legend: {
-                  x: 220,
-                  y: 40,
-                  data: data.typeName
-                },
-                toolbox: {
-                  show: true,
-                  feature: {
-                    magicType: {
-                      show: true,
-                      title: {
-                        line: 'Line',
-                        bar: 'Bar',
-                        stack: 'Stack',
-                        tiled: 'Tiled'
-                      },
-                      type: ['line', 'bar', 'stack', 'tiled']
-                    },
-                    restore: {
-                      show: true,
-                      title: "Restore"
-                    },
-                    saveAsImage: {
-                      show: true,
-                      title: "Save Image"
-                    }
-                  }
-                },
-                calculable: true,
-                xAxis: [{
-                  type: 'category',
-                  boundaryGap: false,
-                  data: data.date
-                }],
-                yAxis: [{
-                  type: 'value'
-                }],
-                series: data.echartData
-            });
-
             //initial table
             var typeSet = data.typeName;
             $('#stockTableID').html(getUrlParameter('ticker'));

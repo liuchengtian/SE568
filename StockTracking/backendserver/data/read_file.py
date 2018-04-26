@@ -68,6 +68,11 @@ def read_historical(stockSymbol, from_time, to_time):
     # print(historical_prices)
     return historical_prices
 
+def formatDate(date):
+    dateSet = date.split('-')
+    result = dateSet[1]+'/'+dateSet[2]+'/'+dateSet[0]
+    return result
+
 def getYearRange(stockSymbol):
     dirname = os.path.dirname(__file__)
     path = '/csv/' + stockSymbol + '_historical.csv'
@@ -80,8 +85,8 @@ def getYearRange(stockSymbol):
         dataItem = dm.data.iloc[i, :]
         dateSet.append(dataItem[0])
     resultSet = dict()
-    resultSet['min'] = dateSet[0]
-    resultSet['max'] = dateSet[lenSize-1]
+    resultSet['min'] = formatDate(dateSet[0])
+    resultSet['max'] = formatDate(dateSet[lenSize-1])
     print(resultSet)
     return resultSet
 

@@ -54,12 +54,18 @@
           <div class="x_content">
             <div class="row grid_slider">
               <div class="col-md-6 col-md-offset-3 col-sm-6 col-xs-12">
-                <input type="text" id="rangeYear" value="" name="range" />
-              </div>
-              <div class="col-md-1 col-sm-1 col-xs-12">
-                <span class="input-group-btn">
-                  <button class="btn btn-round btn-primary" id="submitLine" type="button">set</button>
-                </span>
+                <form class="form-horizontal">
+                  <fieldset>
+                    <div class="control-group">
+                      <div class="controls">
+                        <div class="input-prepend input-group">
+                          <span class="add-on input-group-addon"><i class="glyphicon glyphicon-calendar fa fa-calendar"></i></span>
+                          <input type="text" style="width: 200px" name="reservation" id="reservation" class="form-control" value="01/01/2016 - 01/25/2016" />
+                        </div>
+                      </div>
+                    </div>
+                  </fieldset>
+                </form>
               </div>
             </div>
           </div>
@@ -135,7 +141,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>RSI</h2>
+                <h2>MACD</h2>
                 <ul class="nav navbar-right panel_toolbox">
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
@@ -163,7 +169,7 @@
           <div class="col-md-12 col-sm-12 col-xs-12">
             <div class="x_panel">
               <div class="x_title">
-                <h2>MACD<small id="stockTableID">AMZN</small></h2>
+                <h2>Price Table<small id="stockTableID">AMZN</small></h2>
                 <ul class="nav navbar-right panel_toolbox">
                   <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
                   </li>
