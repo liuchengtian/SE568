@@ -154,6 +154,49 @@ def query_info_macd(stockname, time_type, from_time, to_time):
     return MACD.loc[from_time:to_time]
 
 
+def query_info_highest(stockname):
+    query_highest = """
+    SELECT max(t.`4. close`)
+    FROM (SELECT `4. close`
+            FROM {__stockname__}_historical
+            ORDER BY date DESC
+            LIMIT 10) AS t
+    """
+    q_results = cursor.execute(query_highest.format(__stockname__=stockname))
+    for res in q_results:
+        highest = res[0]
+    return highest
+
+
+def query_info_average(stockname):
+    query_average = """
+    SELECT avg(t.`4. close`)
+    FROM (SELECT `4. close`
+            FROM {__stockname__}_historical
+            ORDER BY date DESC
+            LIMIT 365) AS t
+    """
+    q_results = cursor.execute(query_average.format(__stockname__=stockname))
+    for res in q_results:
+        average = res[0]
+    return average
+
+
+def query_info_lowest(stockname):
+    query_lowest = """
+    SELECT min(t.`4. close`)
+    FROM (SELECT `4. close`
+            FROM {__stockname__}_historical
+            ORDER BY date DESC
+            LIMIT 365) AS t
+    """
+    q_results = cursor.execute(query_lowest.format(__stockname__=stockname))
+    for res in q_results:
+        lowest = res[0]
+    return lowest
+
+
 # if __name__ == '__main__':
 # function('AAPL', 'daily')
 # print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
+print(query_info_lowest('AAPL'))
