@@ -142,7 +142,7 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
     data = {'SMA1': moving_avg1,
             'date1': date1,
             'SMA2': moving_avg2,
-            'data2': date2}
+            'date2': date2}
     return data
 
 

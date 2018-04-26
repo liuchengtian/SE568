@@ -355,8 +355,8 @@ $( document ).ready(function() {
         }); 
   }
   if($('#SMA_chart').length){
-    var urlPrice = "backend/get_price";
-    var input = {'ticker': getUrlParameter('ticker')};
+    var urlPrice = "backend/get_moving_avg";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time':'2003-01-01','to_time':'2004-01-01'};
     console.log(input);
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
@@ -409,7 +409,7 @@ $( document ).ready(function() {
                 xAxis: [{
                   type: 'category',
                   boundaryGap: false,
-                  data: [1,2,3,5,6,7]
+                  data: data.date
                 }],
                 yAxis: [{
                   type: 'value'
@@ -422,7 +422,7 @@ $( document ).ready(function() {
                   normal: {
                   }
                   },
-                  data: [10, 12, 21, 54, 260, 830, 710]
+                  data: data.prices
                 }, {
                   name: 'SMA1',
                   type: 'line',
@@ -431,7 +431,7 @@ $( document ).ready(function() {
                   normal: {
                   }
                   },
-                  data: [30, 182, 434, 791, 390, 30, 10]
+                  data: data.SMA1
                 }, {
                   name: 'SMA2',
                   type: 'line',
@@ -440,7 +440,7 @@ $( document ).ready(function() {
                   normal: {
                   }
                   },
-                  data: [1320, 1132, 601, 234, 120, 90, 20]
+                  data: data.SMA2
                 }]
               });
             },
