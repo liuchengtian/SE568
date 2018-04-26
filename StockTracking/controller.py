@@ -359,11 +359,17 @@ def get_favorite_stock_prices():
         result['data'] = []
         result['name'] = []
         stocks = get_favorite()
-        dataItem = dict()
+        min_set = []
         for item in stocks:
-            dataItem['data'] = query_info.query_info_close(item, time_type, from_time, to_time)
-            result['data'].append(dataItem)
+            data_set = dict()
+            print(item)
+            result['date'] = query_info.query_info_date(item, time_type, from_time, to_time)
+            data_set['data'] = query_info.query_info_close(item, time_type, from_time, to_time)
+            print(data_set['data'])
+            min_set.append(min(data_set['data']))
+            result['data'].append(data_set)
             result['name'].append(item)
+        result['min'] = min(min_set)
         return jsonify(result)
     else:
         print("in none")
@@ -371,4 +377,27 @@ def get_favorite_stock_prices():
     return True
 
 
+@app.route('/backend/get_favorite_news', methods=['GET', 'POST'])
+def get_favorite_news():
+    if current_user.is_authenticated:
+        stocks = get_favorite()
+        min_set = []
+        for item in stocks:
+            print('get news about ' + item)
+            return jsonify(rss.feed(item))
+    else:
+        print("in none")
+        return None
+    return True
 
+
+@app.route('/backend/get_favorite_stocks', methods=['GET', 'POST'])
+def get_favorite_stocks():
+    if current_user.is_authenticated:
+        stocks = get_favorite()
+        for item in stocks:
+            return jsonify(read_file.get_fav_stocks(stocks))
+    else:
+        print("in none")
+        return None
+    return True

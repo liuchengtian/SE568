@@ -58,6 +58,25 @@ def getStocks():
     result['colName'] = typeSet
     return result
 
+def get_fav_stocks(stocks_set):
+    dirname = os.path.dirname(__file__)
+    resultSet = []
+    typeSet = None
+    result = dict()
+    for item in stocks_set:
+        path = '/csv/'+item+'_historical.csv'
+        dm = DM.DataManager(dirname+path)
+        dataItem = dict()
+        typeSet = dm.column_names
+        lenSize,itemSize = dm.data.shape
+        tempItem = dm.data.iloc[lenSize-1, :]
+        for j in range(itemSize):
+            dataItem[typeSet[j]]=tempItem[j]
+        resultSet.append(dataItem)
+    result['data'] = resultSet
+    result['colName'] = typeSet
+    return result
+
 
 def read_historical(stockSymbol, from_time, to_time):
     dirname = os.path.dirname(__file__)
