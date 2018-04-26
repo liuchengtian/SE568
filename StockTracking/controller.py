@@ -15,7 +15,7 @@ import os
 
 
 from StockTracking.backendserver.rss import rss
-from StockTracking.backendserver.data import read_file,query_info
+from StockTracking.backendserver.data import read_file, query_info, favorite
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -291,3 +291,51 @@ def get_yearRange():
     ticker = request.form.get('ticker')
     print('get yearRange')
     return jsonify(read_file.getYearRange(ticker))
+
+
+@app.route('/backend/get_highest_price', methods=['GET', 'POST'])
+def get_highest_price():
+    ticker = request.form.get('ticker')
+    return query_info.query_info_highest(ticker)
+
+
+@app.route('/backend/get_average_price', methods=['GET', 'POST'])
+def get_average_price():
+    ticker = request.form.get('ticker')
+    return query_info.query_info_average(ticker)
+
+
+@app.route('/backend/get_lowest_price', methods=['GET', 'POST'])
+def get_lowest_price():
+    ticker = request.form.get('ticker')
+    return query_info.query_info_lowest(ticker)
+
+
+@app.route('/backend/add_favorite', methods=['GET', 'POST'])
+def add_favorite():
+    if current_user.is_authenticated:
+        userInfo = dict()
+        userInfo['id'] = current_user.id
+        userInfo['name'] = current_user.username
+    else:
+        print("in none")
+        return None
+    ticker = request.form.get('ticker')
+    favorite.add_favorite(userInfo['id'], ticker)
+    return True
+
+
+@app.route('/backend/get_favorite', methods=['GET', 'POST'])
+def get_favorite():
+    if current_user.is_authenticated:
+        userInfo = dict()
+        userInfo['id'] = current_user.id
+        userInfo['name'] = current_user.username
+    else:
+        print("in none")
+        return None
+    favorite.read_favorite(userInfo['id'])
+    return True
+
+
+
