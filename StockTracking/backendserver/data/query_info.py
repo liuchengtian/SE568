@@ -82,12 +82,11 @@ def query_info_neural_network(stockname, time_type, from_time, to_time):
     pred_price1 = round(analyzeSymbol(stockname, 50),2)
 
     query_current_price = """
-        SELECT "4. close"
+        SELECT `4. close`
         FROM {__stockname__}_{__time_type__}
-        WHERE Date <= '{__to_time__}'
         """
 
-    q_results = cursor.execute(query_current_price.format(__stockname__=stockname, __time_type__=time_type, __to_time__=to_time))
+    q_results = cursor.execute(query_current_price.format(__stockname__=stockname, __time_type__=time_type))
     for res in q_results:
         chart_data = res[0]
     current_price = chart_data
@@ -199,5 +198,5 @@ def query_info_lowest(stockname):
 
 # if __name__ == '__main__':
 # function('AAPL', 'daily')
-# print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
+print(query_info_svm('AAPL', 'historical', '2003-01-01', '2004-01-01'))
 # print(query_info_lowest('AAPL'))
