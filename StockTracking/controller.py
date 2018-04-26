@@ -8,13 +8,14 @@ from flask_sqlalchemy import SQLAlchemy
 from wtforms import StringField, PasswordField, BooleanField
 from wtforms.validators import InputRequired, Email, Length
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask.ext.login import AnonymousUserMixin
 import feedparser
 import csv
 import os
 
 
-from .backendserver.rss import rss
-from .backendserver.data import read_file
+from StockTracking.backendserver.rss import rss
+from StockTracking.backendserver.data import read_file
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 
@@ -34,6 +35,16 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(15), unique=True)
     email = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(80))
+    #authenticated = db.Column(db.Boolean, default=False)
+
+    def is_authenticated(self):
+        """Check the user whether logged in."""
+
+        # Check the User's instance whether Class AnonymousUserMixin's instance.
+        if isinstance(self, AnonymousUserMixin):
+            return False
+        else:
+            return True
 
 
 @login_manager.user_loader
@@ -60,6 +71,8 @@ def start():
 
 @app.route('/login',  methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for('mainPage'))
     form = LoginForm()
 
     if form.validate_on_submit():
@@ -75,6 +88,16 @@ def login():
     return render_template('login.html', form=form)
 
 
+def is_logined():
+    if current_user.is_authenticated:
+        return True
+    return False
+
+
+def user_info():
+    return current_user
+
+
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     form = RegisterForm()
@@ -85,7 +108,7 @@ def signup():
         db.session.add(new_user)
         db.session.commit()
 
-        return '<h1> New user has been created!</h1>'
+        return redirect(url_for('login'))
 
     return render_template('signup.html', form=form)
 
@@ -102,6 +125,7 @@ def stock():
     print('in stock')
     return render_template('mainPage.html')
 
+
 @app.route('/stock?ticker=<ticker_id>', methods=['GET', 'POST'])
 def user(ticker_id):
     print("have ticker name")
@@ -110,9 +134,8 @@ def user(ticker_id):
 
 
 @app.route('/user', methods=['GET', 'POST'])
-def index():
+def mainPage():
     return render_template('userPage.html')
-
 
 
 @app.route('/stocks', methods=['GET', 'POST'])
