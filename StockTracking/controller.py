@@ -145,7 +145,12 @@ def stock():
 
 
 @app.route('/stock?ticker=<ticker_id>', methods=['GET', 'POST'])
-def stock_with_id(ticker_id):
+def stock_with_id_preView(ticker_id):
+    print("have ticker name:", ticker_id)
+    return render_template('mainPage.html')
+
+@app.route('/stock?ticker=<ticker_id>&time_type=<time_type>&from_time=<from_time>&to_time=<to_time>', methods=['GET', 'POST'])
+def stock_with_id(ticker_id,time_type,from_time,to_time):
     print("have ticker name:", ticker_id)
     return render_template('mainPage.html')
 
@@ -216,7 +221,9 @@ def get_macd():
     MACD = data['MACD'].tolist()
     MACD_Signal = data['MACD_Signal'].tolist()
     date = query_info.query_info_date(ticker, time_type, from_time, to_time)
-    assert(len(data['MACD_Hist']) == len(date))
+    print((date))
+    print((MACD))
+    assert(len(data['date']) == len(date))
     result = {
         'MACD': MACD,
         'MACD_Signal': MACD_Signal,
