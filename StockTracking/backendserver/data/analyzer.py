@@ -100,7 +100,7 @@ def getTrainingData(stockSymbol,term):
 
     # reverse it so we're using the most recent data first, ensure we only have 9 data points
     historicalData.reverse()
-    del historicalData[9:]
+    #del historicalData[9:]
 
     # get five 5-day moving averages, 5-day lows, and 5-day highs, associated with the closing price
     trainingData = getTimeSeriesValues(historicalData, term)
