@@ -48,7 +48,7 @@ def delete_favorite(id, ticker):
     delete_favorite_stock = """
     DELETE
     FROM favorite
-    WHERE id = {__id__} and favorite_stock = {__ticker__}
+    WHERE id = {__id__} and favorite_stock = '{__ticker__}'
     """
     ticker = []
     cursor.execute(delete_favorite_stock.format(__id__=id, __ticker__=ticker))
