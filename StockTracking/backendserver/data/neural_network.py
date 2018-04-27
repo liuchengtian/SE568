@@ -1,3 +1,4 @@
+# uses the previous homework written by Zhiwang Wang
 import math, random
 
 random.seed(0)
@@ -9,7 +10,7 @@ def rand(a, b):
     return (b - a) * random.random() + a
 
 
-def makeMatrix(I, J, fill=0.0):
+def make_matrix(I, J, fill=0.0):
     m = []
     for i in range(I):
         m.append([fill] * J)
@@ -17,7 +18,6 @@ def makeMatrix(I, J, fill=0.0):
 
 
 def sigmoid(x):
-    # tanh is a little nicer than the standard 1/(1+e^-x)
     return math.tanh(x)
 
 
@@ -41,8 +41,8 @@ class NeuralNetwork:
         self.outputActivation = [1.0] * self.outputNodes
 
         # create weights
-        self.inputWeight = makeMatrix(self.inputNodes, self.hiddenNodes)
-        self.outputWeight = makeMatrix(self.hiddenNodes, self.outputNodes)
+        self.inputWeight = make_matrix(self.inputNodes, self.hiddenNodes)
+        self.outputWeight = make_matrix(self.hiddenNodes, self.outputNodes)
         # set them to random vaules
         for i in range(self.inputNodes):
             for j in range(self.hiddenNodes):
@@ -52,8 +52,8 @@ class NeuralNetwork:
                 self.outputWeight[j][k] = rand(-2.0, 2.0)
 
         # last change in weights for momentum
-        self.ci = makeMatrix(self.inputNodes, self.hiddenNodes)
-        self.co = makeMatrix(self.hiddenNodes, self.outputNodes)
+        self.ci = make_matrix(self.inputNodes, self.hiddenNodes)
+        self.co = make_matrix(self.hiddenNodes, self.outputNodes)
 
     def update(self, inputs):
         if len(inputs) != self.inputNodes - 1:

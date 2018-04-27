@@ -1,4 +1,5 @@
-from .analyzer import analyzeSymbol, SVMpredict
+# author: Chengtian Liu
+from .analyzer import analyze_symbol, SVMpredict
 from .bayesian import BayesianCurveFitting
 from .rsi import get_RSI
 from .macd import get_MACD
@@ -20,6 +21,7 @@ cursor = conn.cursor()
 
 
 def query_info_date(stockname, time_type, from_time, to_time):
+    # query date from from_time to to_time and returns a list
     query_date = """
         SELECT date
         FROM {__stockname__}_{__time_type__}
@@ -35,6 +37,7 @@ def query_info_date(stockname, time_type, from_time, to_time):
 
 
 def query_info_close(stockname, time_type, from_time, to_time):
+    # query close price from from_time to to_time and returns a list
     close = []
     query_close = """
         SELECT `4. close`
@@ -50,7 +53,7 @@ def query_info_close(stockname, time_type, from_time, to_time):
 
 
 def query_info_rsi(stockname, time_type, from_time, to_time):
-    # get RSI results
+    # get RSI results from from_time to to_time and returns a list
     print('get RSI result:')
     rsi = get_RSI(stockname, time_type, from_time, to_time)
     # returns a list of rsi
@@ -76,10 +79,10 @@ def query_info_bayesian(stockname, time_type=None, from_time=None, to_time=None)
 
 
 def query_info_neural_network(stockname, time_type, from_time, to_time):
-    # moving average result
+    # get neural network prediction
     print('get moving average result:')
-    pred_price = round(analyzeSymbol(stockname, 5),2)
-    pred_price1 = round(analyzeSymbol(stockname, 50),2)
+    pred_price = round(analyze_symbol(stockname, 5),2)
+    pred_price1 = round(analyze_symbol(stockname, 50),2)
 
     query_current_price = """
         SELECT `4. close`
@@ -182,7 +185,7 @@ def query_info_average(stockname):
     return average
 
 
-def query_info_lowest(stockname):
+def query_info_lowest(stockname: int):
     query_lowest = """
     SELECT min(t.`4. close`)
     FROM (SELECT `4. close`

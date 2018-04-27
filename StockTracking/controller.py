@@ -1,4 +1,4 @@
-# init
+# author: Chengtian Liu, Shuaishuai Sun, Yixuan Duan
 from flask import Flask, render_template, request, redirect, url_for
 from flask import request, render_template, jsonify
 from flask_wtf import FlaskForm

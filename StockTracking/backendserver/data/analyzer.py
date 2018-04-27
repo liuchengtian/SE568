@@ -1,3 +1,4 @@
+# written by all, debugged by Zhiwen Wang
 from .neural_network import NeuralNetwork
 import time
 import sys
@@ -123,7 +124,7 @@ def getPredictionData(stockSymbol, term):
 
 # ================================================================
 
-def analyzeSymbol(stockSymbol, term):
+def analyze_symbol(stockSymbol, term):
     startTime = time.time()
 
     trainingData = getTrainingData(stockSymbol, term)
@@ -149,20 +150,6 @@ def analyzeSymbol(stockSymbol, term):
     return returnData
 
 # ================================================================
-
-def getBayesianCurveFit(path, stock_name, M, day_in_future):
-    # path = 'C:/Users/wangd/workspace/PredictStock/src/' #path of .csv file
-    # stock_name = 'EBAY.csv'
-    # M = '3'
-    # day_in_future = '1' # 1 means tomorrow
-    #    'java'+'-jar'+'name of .jar u want to run' + 'path of your .csv file' + 'stockname.cvs'+'order of polynomial'+'days in the future'+'number of args'
-    cmd = ['java', '-jar', 'PredictStock.jar', path , stock_name, M, day_in_future, '5']
-    output = subprocess.Popen(cmd, stdout = subprocess.PIPE ).communicate()[0]
-    result = output.split(': ')
-    output = round(float(result[1]), 2)
-    return output
-
-# predict stock use SVM choose kernal='rbf'
 
 def SVMpredict(filename):
     input_file = open(filename)
@@ -195,4 +182,4 @@ def SVMpredict(filename):
 
 
 if __name__ == "__main__":
-    print(analyzeSymbol("GOOG",5))
+    print(analyze_symbol("GOOG",5))
