@@ -14,4 +14,4 @@ def get_MACD(stockname, time_type, from_time, to_time):
 
 
 if __name__ == '__main__':
-    print(get_MACD('AAPL', 'daily'))
+    print(get_MACD('AAPL', 'daily', '2013-01-01', '2014-01-01'))

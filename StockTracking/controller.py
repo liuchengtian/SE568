@@ -220,10 +220,10 @@ def get_macd():
     MACD_Hist = data['MACD_Hist'].tolist()
     MACD = data['MACD'].tolist()
     MACD_Signal = data['MACD_Signal'].tolist()
-    date = query_info.query_info_date(ticker, time_type, from_time, to_time)
-    print((date))
-    print((MACD))
-    assert(len(data['date']) == len(date))
+    # date = query_info.query_info_date(ticker, time_type, from_time, to_time)
+    date = data.index.values.tolist()
+    print(len(date))
+    print(len(MACD))
     result = {
         'MACD': MACD,
         'MACD_Signal': MACD_Signal,
@@ -369,10 +369,10 @@ def get_favorite_stock_prices():
         min_set = []
         for item in stocks:
             data_set = dict()
-            print(item)
+            # print(item)
             result['date'] = query_info.query_info_date(item, time_type, from_time, to_time)
             data_set['data'] = query_info.query_info_close(item, time_type, from_time, to_time)
-            print(data_set['data'])
+            # print(data_set['data'])
             min_set.append(min(data_set['data']))
             result['data'].append(data_set)
             result['name'].append(item)

@@ -152,9 +152,9 @@ def query_info_moving_avg(stockname, time_type, from_time, to_time):
 def query_info_macd(stockname, time_type, from_time, to_time):
     # get MACD results
     print('get MACD result:')
-    MACD = get_MACD(stockname, time_type, from_time, to_time)
+    macd = get_MACD(stockname, time_type, from_time, to_time)
     # pandas
-    return MACD.loc[from_time:to_time]
+    return macd.loc[from_time:to_time]
 
 
 def query_info_highest(stockname):
@@ -201,5 +201,5 @@ def query_info_lowest(stockname: int):
 
 # if __name__ == '__main__':
 # function('AAPL', 'daily')
-#print(query_info_svm('AAPL', 'historical', '2003-01-01', '2004-01-01'))
+# print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
 # print(query_info_lowest('AAPL'))
