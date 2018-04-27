@@ -291,7 +291,6 @@ function checkBoxClick(){
 //initial followed Icon
 function checkFollowClick(){
   if($('#followIcon').length){
-    //Verfy
     $('#followIcon').click(function(){
       console.log($('#follow_icon'));
       colorItem = $('#follow_icon').css("color");
@@ -317,6 +316,23 @@ function checkFollowClick(){
       }
       else{
         $('#follow_icon').css("color",'#c5c7cb');
+        var url_del_fav = "backend/delete_favorite_stocks";
+        var input = {'ticker': getUrlParameter('ticker')};
+        console.log(input);
+        if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+        }
+        $.ajax({type: "post",
+          url: url_del_fav,
+          data: input,
+          dataType: 'json',
+          success: function(data){
+              console.log(data);
+              },
+          error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                          //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                      }
+        });
       }
     });
   }
