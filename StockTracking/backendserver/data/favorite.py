@@ -44,20 +44,19 @@ def read_favorite(id):
     return ticker
 
 
-def delete_favorite(id):
+def delete_favorite(id, ticker):
     delete_favorite_stock = """
-    DELETE * 
+    DELETE
     FROM favorite
-    WHERE id = {__id__}
+    WHERE id = {__id__} and favorite_stock = {__ticker__}
     """
     ticker = []
-    cursor.execute(delete_favorite_stock.format(__id__=id))
+    cursor.execute(delete_favorite_stock.format(__id__=id, __ticker__=ticker))
     return
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # conn = sqlite3.connect('../../database.db')
     # cursor = conn.cursor()
     # add_favorite(11, 'MSFT')
     # print(read_favorite(11))
-    pass
