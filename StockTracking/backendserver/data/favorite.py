@@ -27,8 +27,11 @@ def add_favorite(id, ticker):
     INSERT INTO favorite (id, favorite_stock)
     VALUES({__id__}, '{__ticker__}')
     """
-    cursor.execute(add_favorite_stock.format(__id__=id, __ticker__=ticker))
-    conn.commit()
+    try:
+        cursor.execute(add_favorite_stock.format(__id__=id, __ticker__=ticker))
+        conn.commit()
+    except sqlite3.IntegrityError:
+        print('ticker', ticker, 'already in favorite.')
 
 
 def read_favorite(id):
@@ -50,8 +53,8 @@ def delete_favorite(id, ticker):
     FROM favorite
     WHERE id = {__id__} and favorite_stock = '{__ticker__}'
     """
-    ticker = []
     cursor.execute(delete_favorite_stock.format(__id__=id, __ticker__=ticker))
+    conn.commit()
     return
 
 

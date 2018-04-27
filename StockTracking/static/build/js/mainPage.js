@@ -288,6 +288,56 @@ function checkBoxClick(){
   $('#stocksTable').DataTable();
 }
 
+//initial followed Icon
+function checkFollowClick(){
+  if($('#followIcon').length){
+    $('#followIcon').click(function(){
+      console.log($('#follow_icon'));
+      colorItem = $('#follow_icon').css("color");
+      if (colorItem=="rgb(197, 199, 203)"){
+        $('#follow_icon').css("color",'#ff0000');
+        var url_add_fav = "backend/add_favorite";
+        var input = {'ticker': getUrlParameter('ticker')};
+        console.log(input);
+        if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+        }
+        $.ajax({type: "post",
+          url: url_add_fav,
+          data: input,
+          dataType: 'json',
+          success: function(data){
+              console.log(data);
+              },
+          error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                          //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                      }
+        });
+      }
+      else{
+        $('#follow_icon').css("color",'#c5c7cb');
+        var url_del_fav = "backend/delete_favorite_stocks";
+        var input = {'ticker': getUrlParameter('ticker')};
+        console.log(input);
+        if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+        }
+        $.ajax({type: "post",
+          url: url_del_fav,
+          data: input,
+          dataType: 'json',
+          success: function(data){
+              console.log(data);
+              },
+          error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                          //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                      }
+        });
+      }
+    });
+  }
+}
+
 //update time
 function initial_time(){
     if($('#reservation').length){
@@ -313,7 +363,7 @@ function update_sma(){
     }
      $.ajax({
         type: "post",
-        async:false,
+        //async:false,
         url: urlPrice,
         data: input,
         dataType: 'json',
@@ -417,7 +467,7 @@ function update_rsi(){
     }
      $.ajax({
       type: "post",
-      async:false,
+      //async:false,
       url: urlPrice,
       data: input,
       dataType: 'json',
@@ -503,7 +553,7 @@ function update_macd(){
   }
    $.ajax({
     type: "post",
-    async:false,
+    //async:false,
     url: urlPrice,
     data: input,
     dataType: 'json',
@@ -590,7 +640,7 @@ $("#subStockName").click(function(){
   console.log('initial_time');
   $.ajax({
     type: "post",
-    async:false,
+    //async:false,
     url: urlRange,
     data: input,
     dataType: 'json',
@@ -882,6 +932,8 @@ function initial_user_fav(){
 
 $( document ).ready(function() {
 	console.log( "ready!" );
+  //checkFollowClick()
+  checkFollowClick();
   //update UserID
   if($('#userID').length){
     var input = {'user': 123};

@@ -342,7 +342,7 @@ def add_favorite():
         return None
     ticker = request.form.get('ticker').upper()
     favorite.add_favorite(userInfo['id'], ticker)
-    return True
+    return jsonify({})
 
 
 @app.route('/backend/get_favorite', methods=['GET', 'POST'])
@@ -395,7 +395,7 @@ def get_favorite_news():
     else:
         print("in none")
         return None
-    return True
+    return jsonify({})
 
 
 @app.route('/backend/get_favorite_stocks', methods=['GET', 'POST'])
