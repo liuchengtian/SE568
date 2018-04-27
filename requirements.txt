@@ -1,11 +1,11 @@
 flask
-sqlalchemy
-mysql-connector-python
-feedparser
 flask_wtf
 wtforms
 flask_login
 flask_sqlalchemy
+sqlalchemy
+mysql-connector-python
+feedparser
 scipy
 numpy
 pandas

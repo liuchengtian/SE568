@@ -1,3 +1,4 @@
+# written and debugged by all
 import os
 import mysql.connector  # using mysql connector should install it first(python 2.7/3.3/3.4)
 import pandas as pd
@@ -16,8 +17,6 @@ Port = '3306'
 Database = 'SEProject'
 api_key = 'EQ6GGWD5D4ME4283'
 
-
-
 # define database engines
 sqlite_engine = create_engine(
     'sqlite:///database_stock.db',
@@ -35,11 +34,8 @@ ti = TechIndicators(key=api_key, output_format='pandas', retries=20)
 stocks = ['AAPL', 'GOOGL', 'NVDA', 'AABA', 'AMZN', 'MSFT', 'BAC', 'NKE', 'NFLX', 'FB']
 
 
-
-
-
 def init_db():
-    # initialize database and create schema if using mysql
+    # initialize database and create schema if using mysql, if using sqlite it's not necessary
     try:
         cnx = mysql.connector.connect(user=User, password=PassWord, host=Host)  # using configuration of sever
     except mysql.connector.Error:
@@ -92,7 +88,6 @@ def create_db(stock=stocks, engine=sqlite_engine, realtime_loading=True):
             # df.to_sql(name=stock[i] + '_historical', con=engine, if_exists='replace',
             #           dtype={'date': VARCHAR(df.index.get_level_values('date').str.len().max())})
             df.to_sql(name=stock[i] + '_historical', con=engine, if_exists='replace')
-
 
         # ============= code for real-time quotes ==============
         print('Loading real-time data.')

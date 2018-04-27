@@ -1,3 +1,4 @@
+# author: Yixuan Duan
 import csv
 import os
 from StockTracking.backendserver.data import data_manager as DM

@@ -1,3 +1,4 @@
+# written and debugged by all
 import numpy as np
 import os
 from .data_manager import DataManager

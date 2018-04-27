@@ -1,3 +1,4 @@
+// author: Yixuan Duan
 var theme = {
   color: [
     '#26B99A', '#34495E', '#BDC3C7', '#3498DB',
