@@ -182,21 +182,21 @@ def get_stocks():
 
 @app.route('/backend/get_news', methods=['GET', 'POST'])
 def get_news():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     print('get news about ' + ticker)
     return jsonify(rss.feed(ticker))
 
 
 @app.route('/backend/get_price', methods=['GET', 'POST'])
 def get_price():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     print('get price about ' + ticker)
     return jsonify(read_file.getStock(ticker))
 
 
 @app.route('/backend/get_rsi', methods=['GET', "POST"])
 def get_rsi():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
@@ -212,7 +212,7 @@ def get_rsi():
 
 @app.route('/backend/get_macd', methods=['GET', "POST"])
 def get_macd():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
@@ -235,7 +235,7 @@ def get_macd():
 
 @app.route('/backend/get_moving_avg', methods=['GET', "POST"])
 def get_moving_avg():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
@@ -258,7 +258,7 @@ def get_moving_avg():
 
 @app.route('/backend/get_neural_network', methods=['GET', "POST"])
 def get_neural_network():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
@@ -274,7 +274,7 @@ def get_neural_network():
 
 @app.route('/backend/get_bayesian', methods=['GET', "POST"])
 def get_bayesian():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
@@ -284,32 +284,28 @@ def get_bayesian():
 
 @app.route('/backend/get_svm', methods=['GET', "POST"])
 def get_svm():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
     data = query_info.query_info_svm(ticker)
-    days = data[0].tolist()
+    # [[array([368]), array([369]), array([370]), array([371]), array([372])], array([171.69, 180.19, 183.15, 180.26, 175.49])  ]
     prediction = data[1].tolist()
     return jsonify({
-        'day1': prediction[0],
-        'day2': prediction[1],
-        'day3': prediction[2],
-        'day4': prediction[3],
-        'day5': prediction[4],
+        'prediction': prediction
     })
 
 
 @app.route('/backend/get_yearRange', methods=['GET', 'POST'])
 def get_yearRange():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     print('get yearRange')
     return jsonify(read_file.getYearRange(ticker))
 
 
 @app.route('/backend/get_highest_price', methods=['GET', 'POST'])
 def get_highest_price():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     result=dict()
     result['data'] = query_info.query_info_highest(ticker)
     return jsonify(result)
@@ -317,7 +313,7 @@ def get_highest_price():
 
 @app.route('/backend/get_average_price', methods=['GET', 'POST'])
 def get_average_price():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     result=dict()
     result['data'] = query_info.query_info_average(ticker)
     return jsonify(result)
@@ -325,7 +321,7 @@ def get_average_price():
 
 @app.route('/backend/get_lowest_price', methods=['GET', 'POST'])
 def get_lowest_price():
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     result=dict()
     result['data'] = query_info.query_info_lowest(ticker)
     return jsonify(result)
@@ -341,10 +337,9 @@ def add_favorite():
     else:
         print("in none")
         return jsonify({'data':'none'})
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     favorite.add_favorite(userInfo['id'], ticker)
-    print('2')
-    return jsonify({'data':"true"})
+    return jsonify({})
 
 
 @app.route('/backend/get_favorite', methods=['GET', 'POST'])
@@ -397,7 +392,7 @@ def get_favorite_news():
     else:
         print("in none")
         return None
-    return True
+    return jsonify({})
 
 
 @app.route('/backend/get_favorite_stocks', methods=['GET', 'POST'])
@@ -419,7 +414,7 @@ def delete_favorite_stocks():
     else:
         print("in none")
         return None
-    ticker = request.form.get('ticker')
+    ticker = request.form.get('ticker').upper()
     favorite.delete_favorite(userInfo['id'], ticker)
     return jsonify({})
 

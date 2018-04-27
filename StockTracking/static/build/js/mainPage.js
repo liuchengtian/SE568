@@ -457,6 +457,87 @@ function update_sma(){
         });
 }
 
+//update svm
+function update_svm(){
+    var urlPrice = "backend/get_svm";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': getUrlParameter('time_type'), 'from_time': getUrlParameter('from_time'),'to_time':getUrlParameter('to_time')};
+    console.log('in udpating svm');
+    console.log(input);
+    if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+    }
+     $.ajax({
+      type: "post",
+      //async:false,
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log('in udpating svm');
+          console.log(data)
+          //update echart
+          var echartLine = echarts.init(document.getElementById('svm_chart'), theme);
+          echartLine.setOption({
+              title: {
+                text: getUrlParameter('ticker'),
+                subtext: 'Line Chart'
+              },
+              tooltip: {
+                trigger: 'axis'
+              },
+              legend: {
+                x: 220,
+                y: 40,
+                data: ['svm']
+              },
+              toolbox: {
+                show: true,
+                feature: {
+                  magicType: {
+                    show: true,
+                    title: {
+                      line: 'Line',
+                      bar: 'Bar',
+                      stack: 'Stack',
+                      tiled: 'Tiled'
+                    },
+                    type: ['line', 'bar', 'stack', 'tiled']
+                  },
+                  restore: {
+                    show: true,
+                    title: "Restore"
+                  },
+                  saveAsImage: {
+                    show: true,
+                    title: "Save Image"
+                  }
+                }
+              },
+              calculable: true,
+              xAxis: [{
+                type: 'category',
+                boundaryGap: false,
+                data: [1,2,3,4,5]
+              }],
+              yAxis: [{
+                type: 'value',
+                scale: true
+              }],
+              series: [{
+                name: 'svm',
+                type: 'line',
+                smooth: true,
+                data: data.prediction
+              }]
+            });
+          },
+    error: function(XMLHttpRequest, textStatus, errorThrown) { 
+          alert("Status: " + textStatus + "Error: " + errorThrown); 
+      }
+      });
+}
+
+
 //update rsi
 function update_rsi(){
   var urlPrice = "backend/get_rsi";
@@ -1023,6 +1104,9 @@ $( document ).ready(function() {
   }
   if($('#MACD_chart').length){
     update_macd();
+  }
+  if($('#svm_chart').length){
+    update_svm();
   }
 
   if($('#stockTableID').length){

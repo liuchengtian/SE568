@@ -175,7 +175,8 @@ def SVMpredict(filename):
     temp = X[-1]
     predict_X = [temp + 1, temp + 2, temp + 3, temp + 4, temp + 5]
     svr_rbf = SVR(kernel='rbf', C=1e3, gamma=0.1)
-    y_rbf = svr_rbf.fit(X, y).predict(X)
+    svr_rbf.fit(X, y)
+    # y_rbf = svr_rbf.predict(X)
     y_preRbf = svr_rbf.predict(predict_X)
     y_preRbf = np.around(y_preRbf, decimals=2)
     return [predict_X, y_preRbf]
