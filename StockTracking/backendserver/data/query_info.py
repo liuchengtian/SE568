@@ -63,7 +63,10 @@ def query_info_rsi(stockname, time_type, from_time, to_time):
 def query_info_svm(stockname, time_type=None, from_time=None, to_time=None):
     # get SVM prediction
     print('get SVM prediction:')
-    svm = SVMpredict(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv')
+    if time_type == 'historical':
+        svm = SVMpredict(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv')
+    else:
+        svm = SVMpredict(filename='StockTracking/backendserver/data/csv/'+stockname+'_realtime.csv')
     return svm
 
 
@@ -71,7 +74,11 @@ def query_info_bayesian(stockname, time_type=None, from_time=None, to_time=None)
     # get Bayesian prediction
     print('get Bayesian prediction:')
     model = BayesianCurveFitting()
-    data = model.read_csv(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv', y_in_column=4)
+    if time_type == 'historical':
+        data = model.read_csv(filename='StockTracking/backendserver/data/csv/'+stockname+'_historical.csv', y_in_column=4)
+    else:
+        data = model.read_csv(filename='StockTracking/backendserver/data/csv/' + stockname + '_realtime.csv',
+                              y_in_column=4)
     tmp = model.predict(y_vec=data)
     bayesian = tmp[0]
     variance = tmp[1]

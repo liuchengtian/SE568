@@ -288,7 +288,7 @@ def get_svm():
     time_type = request.form.get('time_type')
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
-    data = query_info.query_info_svm(ticker)
+    data = query_info.query_info_svm(ticker, time_type)
     # [[array([368]), array([369]), array([370]), array([371]), array([372])], array([171.69, 180.19, 183.15, 180.26, 175.49])  ]
     prediction = data[1].tolist()
     return jsonify({
