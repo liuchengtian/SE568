@@ -414,7 +414,8 @@ function update_sma(){
                   data: data.date
                 }],
                 yAxis: [{
-                  type: 'value'
+                  type: 'value',
+                  scale: true
                 }],
                 series: [{
                   name: 'price',
@@ -599,7 +600,8 @@ function update_rsi(){
                 data: data.date
               }],
               yAxis: [{
-                type: 'value'
+                type: 'value',
+                scale: true
               }],
               series: [{
                 name: 'rsi',
@@ -685,7 +687,8 @@ function update_macd(){
               data: data.date
             }],
             yAxis: [{
-              type: 'value'
+              type: 'value',
+              scale: true
             }],
             series: [{
               name: 'MACD',
