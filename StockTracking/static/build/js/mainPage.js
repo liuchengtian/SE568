@@ -291,16 +291,32 @@ function checkBoxClick(){
 //initial followed Icon
 function checkFollowClick(){
   if($('#followIcon').length){
+    //Verfy
     $('#followIcon').click(function(){
-      console.log($('#followIcon'));
-      colorItem = $('#followIcon').css("color");
-      if (colorItem=="rgb(255, 255, 255)"){
-        alert(colorItem+'!');
-        $('#followIcon').css("color",'#ff0000');
+      console.log($('#follow_icon'));
+      colorItem = $('#follow_icon').css("color");
+      if (colorItem=="rgb(197, 199, 203)"){
+        $('#follow_icon').css("color",'#ff0000');
+        var url_add_fav = "backend/add_favorite";
+        var input = {'ticker': getUrlParameter('ticker')};
+        console.log(input);
+        if (input === undefined){
+        var input = {'ticker': 'AMZN'};
+        }
+        $.ajax({type: "post",
+          url: url_add_fav,
+          data: input,
+          dataType: 'json',
+          success: function(data){
+              console.log(data);
+              },
+          error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                          //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                      }
+        });
       }
       else{
-        alert(colorItem+'.');
-        $('#followIcon').css("color",'#ffffff');
+        $('#follow_icon').css("color",'#c5c7cb');
       }
     });
   }

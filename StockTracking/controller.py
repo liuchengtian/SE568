@@ -336,12 +336,14 @@ def add_favorite():
         userInfo = dict()
         userInfo['id'] = current_user.id
         userInfo['name'] = current_user.username
+        print('1')
     else:
         print("in none")
-        return None
+        return jsonify({'data':'none'})
     ticker = request.form.get('ticker')
     favorite.add_favorite(userInfo['id'], ticker)
-    return True
+    print('2')
+    return jsonify({'data':"true"})
 
 
 @app.route('/backend/get_favorite', methods=['GET', 'POST'])
