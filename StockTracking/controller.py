@@ -289,14 +289,10 @@ def get_svm():
     from_time = request.form.get('from_time')
     to_time = request.form.get('to_time')
     data = query_info.query_info_svm(ticker)
-    days = data[0].tolist()
+    # [[array([368]), array([369]), array([370]), array([371]), array([372])], array([171.69, 180.19, 183.15, 180.26, 175.49])  ]
     prediction = data[1].tolist()
     return jsonify({
-        'day1': prediction[0],
-        'day2': prediction[1],
-        'day3': prediction[2],
-        'day4': prediction[3],
-        'day5': prediction[4],
+        'prediction': prediction
     })
 
 

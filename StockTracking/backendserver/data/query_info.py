@@ -199,7 +199,9 @@ def query_info_lowest(stockname: int):
     return lowest
 
 
-# if __name__ == '__main__':
+# testcase
 # function('AAPL', 'daily')
 # print(query_info_macd('AAPL', 'historical', '2003-01-01', '2004-01-01'))
 # print(query_info_lowest('AAPL'))
+# print(query_info_svm('AAPL', 'historical', '2004-01-01', '2004-03-01')[1].tolist())
+
