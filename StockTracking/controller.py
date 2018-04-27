@@ -232,6 +232,7 @@ def get_macd():
     }
     return jsonify(result)
 
+
 @app.route('/backend/get_moving_avg', methods=['GET', "POST"])
 def get_moving_avg():
     ticker = request.form.get('ticker')
@@ -383,7 +384,6 @@ def get_favorite_stock_prices():
     else:
         print("in none")
         return None
-    return True
 
 
 @app.route('/backend/get_favorite_news', methods=['GET', 'POST'])
@@ -404,9 +404,18 @@ def get_favorite_news():
 def get_favorite_stocks():
     if current_user.is_authenticated:
         stocks = get_favorite()
-        for item in stocks:
-            return jsonify(read_file.get_fav_stocks(stocks))
+        return jsonify(read_file.get_fav_stocks(stocks))
     else:
         print("in none")
         return None
-    return True
+
+
+@app.route('/backend/delete_favorite_stocks', methods=['GET', 'POST'])
+def delete_favorite_stocks():
+    if current_user.is_authenticated:
+        stocks = favorite.delete_favorite()
+        return jsonify(read_file.get_fav_stocks(stocks))
+    else:
+        print("in none")
+        return None
+
