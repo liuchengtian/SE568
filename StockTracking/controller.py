@@ -413,9 +413,13 @@ def get_favorite_stocks():
 @app.route('/backend/delete_favorite_stocks', methods=['GET', 'POST'])
 def delete_favorite_stocks():
     if current_user.is_authenticated:
-        stocks = favorite.delete_favorite()
-        return jsonify(read_file.get_fav_stocks(stocks))
+        userInfo = dict()
+        userInfo['id'] = current_user.id
+        userInfo['name'] = current_user.username
     else:
         print("in none")
         return None
+    ticker = request.form.get('ticker')
+    favorite.delete_favorite(userInfo['id'], ticker)
+    return jsonify({})
 
