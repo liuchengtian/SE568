@@ -287,15 +287,54 @@ function checkBoxClick(){
   $('#stocksTable').DataTable();
 }
 
+//update time
+function initial_time(){
+    if($('#reservation').length){
+    var urlRange = 'backend/get_yearRange';
+    var input = {'ticker': getUrlParameter('ticker')};
+    console.log('initial_time');
+    $.ajax({
+      type: "post",
+      async:false,
+      url: urlRange,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log('in setting echarts line range');
+          //update echart
+          dateRange.from_time = date_format(data.min);
+          dateRange.to_time = date_format(data.max);
+          console.log(dateRange);
+          $('#reservation').val(data.min+' - '+ data.max);
+          //alert($('#reservation').val());
+          $('#reservation').on('apply.daterangepicker', function(ev, picker) {
+            dateRange.from_time = picker.startDate.format('YYYY-MM-DD'); 
+            dateRange.to_time = picker.endDate.format('YYYY-MM-DD');
+            console.log(dateRange);
+            update_sma();
+            update_rsi();
+            update_macd();
+          });
+        },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+            alert("Status: " + textStatus + "Error: " + errorThrown); 
+        }
+      });
+  }
+}
+
 //update sma charts
 function update_sma(){
-  var urlPrice = "backend/get_moving_avg";
+    var urlPrice = "backend/get_moving_avg";
     var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
     console.log(input);
+    console.log(dateRange);
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
     }
-     $.ajax({type: "post",
+     $.ajax({
+        type: "post",
+        async:false,
         url: urlPrice,
         data: input,
         dataType: 'json',
@@ -397,98 +436,16 @@ function update_rsi(){
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
     }
-     $.ajax({type: "post",
-        url: urlPrice,
-        data: input,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            //update echart
-            var echartLine = echarts.init(document.getElementById('RSI_chart'), theme);
-            echartLine.setOption({
-                title: {
-                  text: getUrlParameter('ticker'),
-                  subtext: 'Line Chart'
-                },
-                tooltip: {
-                  trigger: 'axis'
-                },
-                legend: {
-                  x: 220,
-                  y: 40,
-                  data: ['rsi']
-                },
-                toolbox: {
-                  show: true,
-                  feature: {
-                    magicType: {
-                      show: true,
-                      title: {
-                        line: 'Line',
-                        bar: 'Bar',
-                        stack: 'Stack',
-                        tiled: 'Tiled'
-                      },
-                      type: ['line', 'bar', 'stack', 'tiled']
-                    },
-                    restore: {
-                      show: true,
-                      title: "Restore"
-                    },
-                    saveAsImage: {
-                      show: true,
-                      title: "Save Image"
-                    }
-                  }
-                },
-                calculable: true,
-                xAxis: [{
-                  type: 'category',
-                  boundaryGap: false,
-                  data: data.date
-                }],
-                yAxis: [{
-                  type: 'value'
-                }],
-                series: [{
-                  name: 'rsi',
-                  type: 'line',
-                  smooth: true,
-                  itemStyle: {
-
-                  },
-                  data: data.rsi,
-                  markLine: {
-                      data: [
-                          {yAxis: 20},
-                          {yAxis: 80}
-                      ]
-                  }
-                }]
-              });
-            },
-        fail: function(){
-            console.log('query fail.');
-          }
-        });
-}
-
-//update macd chart 
-function update_macd(){
-  var urlPrice = "backend/get_macd";
-  var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
-  console.log(input);
-  if (input === undefined){
-      var input = {'ticker': 'AMZN'};
-  }
-   $.ajax({type: "post",
+     $.ajax({
+      type: "post",
+      async:false,
       url: urlPrice,
       data: input,
       dataType: 'json',
       success: function(data){
           console.log(data)
           //update echart
-          var echartLine = echarts.init(document.getElementById('MACD_chart'), theme);
+          var echartLine = echarts.init(document.getElementById('RSI_chart'), theme);
           echartLine.setOption({
               title: {
                 text: getUrlParameter('ticker'),
@@ -500,7 +457,7 @@ function update_macd(){
               legend: {
                 x: 220,
                 y: 40,
-                data: ['MACD','MACD_Signal','MACD_Hist']
+                data: ['rsi']
               },
               toolbox: {
                 show: true,
@@ -535,20 +492,19 @@ function update_macd(){
                 type: 'value'
               }],
               series: [{
-                name: 'MACD',
+                name: 'rsi',
                 type: 'line',
                 smooth: true,
-                data: data.MACD
-              },{
-                name: 'MACD_Signal',
-                type: 'line',
-                smooth: true,
-                data: data.MACD_Signal
-              },{
-                name: 'MACD_Hist',
-                type: 'bar',
-                smooth: true,
-                data: data.MACD_Hist
+                itemStyle: {
+
+                },
+                data: data.rsi,
+                markLine: {
+                    data: [
+                        {yAxis: 20},
+                        {yAxis: 80}
+                    ]
+                }
               }]
             });
           },
@@ -556,6 +512,93 @@ function update_macd(){
           console.log('query fail.');
         }
       });
+}
+
+//update macd chart 
+function update_macd(){
+  var urlPrice = "backend/get_macd";
+  var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+  console.log(input);
+  if (input === undefined){
+      var input = {'ticker': 'AMZN'};
+  }
+   $.ajax({
+    type: "post",
+    async:false,
+    url: urlPrice,
+    data: input,
+    dataType: 'json',
+    success: function(data){
+        console.log(data)
+        //update echart
+        var echartLine = echarts.init(document.getElementById('MACD_chart'), theme);
+        echartLine.setOption({
+            title: {
+              text: getUrlParameter('ticker'),
+              subtext: 'Line Chart'
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            legend: {
+              x: 220,
+              y: 40,
+              data: ['MACD','MACD_Signal','MACD_Hist']
+            },
+            toolbox: {
+              show: true,
+              feature: {
+                magicType: {
+                  show: true,
+                  title: {
+                    line: 'Line',
+                    bar: 'Bar',
+                    stack: 'Stack',
+                    tiled: 'Tiled'
+                  },
+                  type: ['line', 'bar', 'stack', 'tiled']
+                },
+                restore: {
+                  show: true,
+                  title: "Restore"
+                },
+                saveAsImage: {
+                  show: true,
+                  title: "Save Image"
+                }
+              }
+            },
+            calculable: true,
+            xAxis: [{
+              type: 'category',
+              boundaryGap: false,
+              data: data.date
+            }],
+            yAxis: [{
+              type: 'value'
+            }],
+            series: [{
+              name: 'MACD',
+              type: 'line',
+              smooth: true,
+              data: data.MACD
+            },{
+              name: 'MACD_Signal',
+              type: 'line',
+              smooth: true,
+              data: data.MACD_Signal
+            },{
+              name: 'MACD_Hist',
+              type: 'bar',
+              smooth: true,
+              data: data.MACD_Hist
+            }]
+          });
+        },
+    fail: function(){
+        console.log('query fail.');
+      }
+    });
 }
 
 //initial set click on
@@ -574,18 +617,20 @@ function initial_kpi(){
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
     }
-     $.ajax({type: "post",
-        url: urlPrice,
-        data: input,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            $('#average_price').html(data.data.toFixed(2));
-            },
-        fail: function(){
-            console.log('query fail.');
-          }
-        });
+     $.ajax({
+      type: "post",
+      async:false,
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          $('#average_price').html(data.data.toFixed(2));
+          },
+      fail: function(){
+          console.log('query fail.');
+        }
+      });
   }
   
   if($('#highest_price').length){
@@ -594,18 +639,20 @@ function initial_kpi(){
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
     }
-     $.ajax({type: "post",
-        url: urlPrice,
-        data: input,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            $('#highest_price').html(data.data.toFixed(2));
-            },
-        fail: function(){
-            console.log('query fail.');
-          }
-        });
+     $.ajax({
+      type: "post",
+      async:false,
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          $('#highest_price').html(data.data.toFixed(2));
+          },
+      fail: function(){
+          console.log('query fail.');
+        }
+      });
   }  
 
   if($('#lowest_price').length){
@@ -614,20 +661,68 @@ function initial_kpi(){
     if (input === undefined){
         var input = {'ticker': 'AMZN'};
     }
-     $.ajax({type: "post",
-        url: urlPrice,
-        data: input,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            $('#lowest_price').html(data.data.toFixed(2));
-            },
-        fail: function(){
-            console.log('query fail.');
-          }
-        });
-  }  
-    
+     $.ajax({
+      type: "post",
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          $('#lowest_price').html(data.data.toFixed(2));
+          },
+      fail: function(){
+          console.log('query fail.');
+        }
+      });
+  } 
+
+  if($('#pred_bayesian').length){
+    var urlPrice = "backend/get_bayesian";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+    console.log(input);
+    if (input === undefined){
+    var input = {'ticker': 'AMZN'};
+    }
+    $.ajax({
+      type: "post",
+      async:false,
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          $('#pred_bayesian').html(data.bayesian.toFixed(2));
+          },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                      //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                  }
+      });
+  } 
+  if($('#pred_NN1').length){
+    var urlPrice = "backend/get_neural_network";
+    var input = {'ticker': getUrlParameter('ticker'),'time_type': 'historical', 'from_time': dateRange.from_time,'to_time':dateRange.to_time};
+    console.log(input);
+    if (input === undefined){
+    var input = {'ticker': 'AMZN'};
+    }
+    $.ajax({
+      type: "post",
+      async:false,
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          $('#pred_NN1').html(data.prediction1.toFixed(2));
+          $('#action_NN1').html(data.action1);
+          $('#pred_NN2').html(data.prediction2.toFixed(2));
+          $('#action_NN2').html(data.action2);
+          },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                      //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                  }
+      });
+  }   
 }
 
 function initial_user_fav(){
@@ -641,7 +736,9 @@ function initial_user_fav(){
     if (input === undefined){
     var input = {'ticker': 'AMZN'};
     }
-    $.ajax({type: "post",
+    $.ajax({
+      type: "post",
+      async:false,
     url: urlPrice,
     data: input,
     dataType: 'json',
@@ -723,30 +820,31 @@ function initial_user_fav(){
     var input = {'ticker': 'AMZN'};
     }
     $.ajax({type: "post",
-    url: urlNews,
-    data: input,
-    dataType: 'json',
-    success: function(data){
-        console.log(data);
-        $.each(data.article, function(i, item) {
-                $('#fav_stockNews').append(
-                    $('<li>').append(
-                        $('<div>').attr('class','block').append(
-                            $('<div>').attr('class','block_content').append(
-                                $('<h2>').attr('class','title').append(
-                                    $('<a>').append(item.title)
-                                ),
-                                $('<div>').attr('class','byline').append(item.date),
-                                $('<p>').attr('class','excerpt').append(item.summary)
-                            )
-                        )
-                    )
-                );
-            });
-        },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
-                }
+      async:false,
+      url: urlNews,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data);
+          $.each(data.article, function(i, item) {
+                  $('#fav_stockNews').append(
+                      $('<li>').append(
+                          $('<div>').attr('class','block').append(
+                              $('<div>').attr('class','block_content').append(
+                                  $('<h2>').attr('class','title').append(
+                                      $('<a>').append(item.title)
+                                  ),
+                                  $('<div>').attr('class','byline').append(item.date),
+                                  $('<p>').attr('class','excerpt').append(item.summary)
+                              )
+                          )
+                      )
+                  );
+              });
+          },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                      //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                  }
     });
   }
   //initial stocks table
@@ -758,29 +856,30 @@ function initial_user_fav(){
     var input = {'ticker': 'AMZN'};
     }
     $.ajax({type: "post",
-    url: urlPrice,
-    data: input,
-    dataType: 'json',
-    success: function(data){
-        console.log(data)
-        stocksData = data;
-        $.each(data.data, function(i,item){
-          $('#fav_stocks_price_table').append(
-              $('<tr>').append(
-                $('<td>').append(data.data[i][data.colName[6]]),
-                $('<td>').append(data.data[i][data.colName[0]]),
-                $('<td>').append(data.data[i][data.colName[1]]),
-                $('<td>').append(data.data[i][data.colName[2]]),
-                $('<td>').append(data.data[i][data.colName[3]]),
-                $('<td>').append(data.data[i][data.colName[4]]),
-                $('<td>').append(data.data[i][data.colName[5]])
-                ));
-        });
-        $('#fav_stockTable').DataTable();
-        },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
-                }
+      async:false,
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          stocksData = data;
+          $.each(data.data, function(i,item){
+            $('#fav_stocks_price_table').append(
+                $('<tr>').append(
+                  $('<td>').append(data.data[i][data.colName[6]]),
+                  $('<td>').append(data.data[i][data.colName[0]]),
+                  $('<td>').append(data.data[i][data.colName[1]]),
+                  $('<td>').append(data.data[i][data.colName[2]]),
+                  $('<td>').append(data.data[i][data.colName[3]]),
+                  $('<td>').append(data.data[i][data.colName[4]]),
+                  $('<td>').append(data.data[i][data.colName[5]])
+                  ));
+          });
+          $('#fav_stockTable').DataTable();
+          },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                      //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                  }
     });
   }
 }
@@ -795,36 +894,42 @@ $( document ).ready(function() {
     var input = {'user': 123};
     var urlGetUser = 'backend/get_userId';
     $.ajax({type: "post",
-    url: urlGetUser,
-    data: input,
-    dataType: 'json',
-    success: function(data){
-        console.log(data)
-        $('#userID').html(data.name);
-        $('#signUp').html('Logout');
-        $('#signUp').attr("href","logout");
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
-                }
-              });
+      async:false,
+      url: urlGetUser,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          $('#userID').html(data.name);
+          $('#signUp').html('Logout');
+          $('#signUp').attr("href","logout");
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                      //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                  }
+                });
   }
   if($('#userName').length){
     var urlGetUser = 'backend/get_userId';
-    $.ajax({type: "post",
-    url: urlGetUser,
-    data: input,
-    dataType: 'json',
-    success: function(data){
-        console.log(data)
-        $('#userName').html(data.name);
-    },
-    error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    //alert("Status: " + textStatus + "Error: " + errorThrown); 
-                    $('#leftSideMenu').empty();
-                }
-              });
+    $.ajax({
+      type: "post",
+      async:false,
+      url: urlGetUser,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          $('#userName').html(data.name);
+      },
+      error: function(XMLHttpRequest, textStatus, errorThrown) { 
+                      //alert("Status: " + textStatus + "Error: " + errorThrown); 
+                      $('#leftSideMenu').empty();
+                  }
+                });
   }
+
+  //initial time
+  initial_time();
   //initial kpi
   initial_kpi();
   //update user info
@@ -838,7 +943,9 @@ $( document ).ready(function() {
     if (input === undefined){
         var input = {'ticker': "AMZN"};
     }
-    $.ajax({type: "post",
+    $.ajax({
+        type: "post",
+        async:false,
         url: url,
         data: input,
         dataType: 'json',
@@ -874,34 +981,6 @@ $( document ).ready(function() {
   }
   if($('#MACD_chart').length){
     update_macd();
-  }
-  if($('#reservation').length){
-    var urlRange = 'backend/get_yearRange';
-    var input = {'ticker': getUrlParameter('ticker')};
-    $.ajax({type: "post",
-              url: urlRange,
-              data: input,
-              dataType: 'json',
-              success: function(data){
-                  console.log('in setting echarts line range');
-                  //update echart
-                  dateRange.from_time = data.min;
-                  dateRange.to_time = data.maz;
-                  $('#reservation').val(data.min+' - '+ data.max);
-                  //alert($('#reservation').val());
-                  $('#reservation').on('apply.daterangepicker', function(ev, picker) {
-                    dateRange.from_time = picker.startDate.format('YYYY-MM-DD'); 
-                    dateRange.to_time = picker.endDate.format('YYYY-MM-DD');
-                    console.log(dateRange);
-                    update_sma();
-                    update_rsi();
-                    update_macd();
-                  });
-                },
-              error: function(XMLHttpRequest, textStatus, errorThrown) { 
-                    alert("Status: " + textStatus + "Error: " + errorThrown); 
-                }
-              });
   }
 
   if($('#stockTableID').length){
@@ -945,39 +1024,40 @@ $( document ).ready(function() {
   if($('#stocksTable').length){
     var urlPrice = "backend/get_stocks";
     var input = {'ticker': 'AMZN'};
-    $.ajax({type: "post",
-        url: urlPrice,
-        data: input,
-        dataType: 'json',
-        success: function(data){
-            console.log(data)
-            //update table
-            stocksData = data;
-            $.each(data.data, function(i,item){
-              $('#priceTable').append(
-                  $('<tr>').append(
-                    $('<td>').append(
-                      $('<input>').attr({
-                        type: "checkbox",
-                        id: "check-all",
-                        class: "flat",
-                        onclick: "checkBoxClick()"
-                      })),
-                    $('<td>').append(data.data[i][data.colName[6]]),
-                    $('<td>').append(data.data[i][data.colName[0]]),
-                    $('<td>').append(data.data[i][data.colName[1]]),
-                    $('<td>').append(data.data[i][data.colName[2]]),
-                    $('<td>').append(data.data[i][data.colName[3]]),
-                    $('<td>').append(data.data[i][data.colName[4]]),
-                    $('<td>').append(data.data[i][data.colName[5]])
-                    ));
-            });
-            $('#stocksTable').DataTable();
-                },
-        fail: function(){
-            console.log('query fail.');
-          }
-        });
+    $.ajax({
+      type: "post",
+      url: urlPrice,
+      data: input,
+      dataType: 'json',
+      success: function(data){
+          console.log(data)
+          //update table
+          stocksData = data;
+          $.each(data.data, function(i,item){
+            $('#priceTable').append(
+                $('<tr>').append(
+                  $('<td>').append(
+                    $('<input>').attr({
+                      type: "checkbox",
+                      id: "check-all",
+                      class: "flat",
+                      onclick: "checkBoxClick()"
+                    })),
+                  $('<td>').append(data.data[i][data.colName[6]]),
+                  $('<td>').append(data.data[i][data.colName[0]]),
+                  $('<td>').append(data.data[i][data.colName[1]]),
+                  $('<td>').append(data.data[i][data.colName[2]]),
+                  $('<td>').append(data.data[i][data.colName[3]]),
+                  $('<td>').append(data.data[i][data.colName[4]]),
+                  $('<td>').append(data.data[i][data.colName[5]])
+                  ));
+          });
+          $('#stocksTable').DataTable();
+              },
+      fail: function(){
+          console.log('query fail.');
+        }
+      });
   }
 });
 
