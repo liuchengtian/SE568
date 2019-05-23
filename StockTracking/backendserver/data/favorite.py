@@ -8,11 +8,12 @@ sqlite_engine = create_engine(
     convert_unicode=True,
     echo=True
 )
-conn = sqlite3.connect('StockTracking/database.db')
-cursor = conn.cursor()
 
 
 def add_favorite(id, ticker):
+    conn = sqlite3.connect('StockTracking/database.db')
+    cursor = conn.cursor()
+
     create_favorite_db = """
     CREATE TABLE IF NOT EXISTS favorite(
        id INTEGER,
@@ -35,6 +36,9 @@ def add_favorite(id, ticker):
 
 
 def read_favorite(id):
+    conn = sqlite3.connect('StockTracking/database.db')
+    cursor = conn.cursor()
+
     read_favorite_stock = """
     SELECT * 
     FROM favorite
@@ -48,6 +52,9 @@ def read_favorite(id):
 
 
 def delete_favorite(id, ticker):
+    conn = sqlite3.connect('StockTracking/database.db')
+    cursor = conn.cursor()
+
     delete_favorite_stock = """
     DELETE
     FROM favorite

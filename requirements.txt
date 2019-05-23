@@ -3,6 +3,7 @@ flask_wtf
 wtforms
 flask_login
 flask_sqlalchemy
+flask_bootstrap
 sqlalchemy
 mysql-connector-python
 feedparser
